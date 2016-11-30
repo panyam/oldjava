@@ -1,0 +1,108 @@
+            for (line = 0;
+                 (line < nLines) && (currY + lineHeights[line] < 0);
+                 currY += lineHeights[line], line++);
+
+            int toLine = hasCursor ? cursor.currLine : nLines;
+            int h, lh, nSyms;
+
+			cursor.startingLine = line;
+                    // draw all the lines before the cursor...
+            for ( ; currY < ey && line < toLine;line++)
+            {
+                    // skip all invisible positions...
+                nSyms = nSymbols[line];
+                lh = lineHeights[line];
+                currX = sx + 4;
+                for (pos = 0;
+                     pos < nSyms && (currX + symbols[line][pos].width < 0); 
+                     currX += symbols[line][pos].width, pos++);
+
+                for (; currX < ex && pos < nSyms ; pos++)
+                {
+                        // draw the symbol...
+                    h = symbols[line][pos].height;
+                    symbols[line][pos].draw(g, currX, currY + ((lh - h) >> 1), ex, ey, cursor, drawBorder);
+
+                        // increment the x position...
+                    currX += symbols[line][pos].width + 2;
+                }
+                currY += lh + 2;
+            }
+
+                // now draw the cursor line...
+            if (hasCursor)
+            {
+                nSyms = nSymbols[line];
+                lh = lineHeights[line];
+                currX = sx + 4;
+                for (pos = 0;
+                     pos < cursor.currPos && (currX + symbols[line][pos].width < 0); 
+                     currX += symbols[line][pos].width, pos++);
+
+				cursor.endingLine = line;
+				cursor.startingCol = pos;
+                for (; pos < nSyms && currX < ex && pos < cursor.currPos; pos++)
+                {
+                        // draw the symbol...
+                    h = symbols[line][pos].height;
+                    symbols[line][pos].draw(g, currX, currY + ((lh - h) >> 1), ex, ey, cursor, drawBorder);
+
+                        // increment the x position...
+                    currX += symbols[line][pos].width + 2;
+                }
+				cursor.endingCol = pos - 1;
+
+						// if the cursor hasnt reached the position
+						// yet it means we are out of hte screen 
+						// but we still need to find where the cursor is.
+						// so skip over all the other symbols that
+						// cant be seen...
+				while (pos < cursor.currPos)
+				{
+					currX += symbols[line][pos].width + 2;
+					pos++;
+				}
+                        // draw the cursor here...
+				cursor.cursorHeight = lineHeights[line];
+	            g.drawLine(currX - 2, currY + 1, currX - 2, currY + lineHeights[line]);
+					// set the current position of the cursor...
+				cursor.globalX = currX - 2;
+				cursor.globalY = currY + 1;
+
+                for (; currX < ex && pos < nSyms; pos++)
+                {
+                        // draw the symbol...
+                    h = symbols[line][pos].height;
+                    symbols[line][pos].draw(g, currX, currY + ((lh - h) >> 1), ex, ey, cursor, drawBorder);
+
+                        // increment the x position...
+                    currX += symbols[line][pos].width + 2;
+                }
+                currY += lh + 2;
+                line++;
+
+                        // draw the remaining lines...
+                for ( ; currY < ey && line < nLines;line++)
+                {
+                        // skip all invisible positions...
+                    nSyms = nSymbols[line];
+                    lh = lineHeights[line];
+                    currX = sx + 4;
+                    for (pos = 0;
+                        pos < nSyms && (currX + symbols[line][pos].width < 0); 
+                        currX += symbols[line][pos].width, pos++);
+
+                    for (; currX < ex && pos < nSyms ; pos++)
+                    {
+                            // draw the symbol...
+                        h = symbols[line][pos].height;
+                        symbols[line][pos].draw(g, currX, currY + ((lh - h) >> 1), 
+												ex, ey, cursor, drawBorder);
+
+                            // increment the x position...
+                        currX += symbols[line][pos].width + 2;
+                    }
+                    currY += lh + 2;
+                }
+            }
+ 

@@ -1,0 +1,14 @@
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Schema for the XML version of the BNF syntax.
+            Copyright 2000. All rights reserved.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="syntax" type="SyntaxType" minOccurs="0"/>
+
+    <xsd:complexType name="SyntaxType">
+    </xsd:complexType>
+</xsd:schema>

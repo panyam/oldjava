@@ -1,0 +1,142 @@
+
+Purpose:
+--------
+To create a text editor that would provide syntax based editing of textual
+data whose syntax can be described in xml files.  So far most text editors
+only provide syntax highlighting.  Why cant this be extended to provide
+"templates" as the user types keywords.  For example when the user types
+the "for" keyword, it may automatically insert 3 place holders so that the
+user can automatically insert the rest of the "for" command information.
+
+Functionality:
+--------------
+1) All document syntax would be described in external XML files and should be
+automatically applied to files.  Syntax-off implies no syntax is being
+applied and this functionality is like a normal text editor.
+
+2) Grammar/Syntax description file may also describe highlighting syntax or
+this can be in an external file.
+
+This editor would be very similar to the MathML editor I wrote a couple of
+years ago.  The main idea is Components and Containers.
+
+
+So what is required is a way to apply a BNF grammar to a document.
+Following is the EBNF syntax:
+
+----------------    EBNF Syntax     ------------------
+
+  syntax      : ( rule )*;
+  rule        : nonterminal ":" expression ";";
+  expression  : term ( "|" term )*;
+  term        : ( factor )*; // either zero or more, or lambda as factor
+  factor      : identifier
+              | string
+              | "(" expression ")" { ( "*" | "+" ) }
+              | "{" expression "}"
+              ;
+  identifier  :  letter { letter | digit };
+  string      : """ ( any_character )* """;
+
+----------------    EBNF Syntax End     --------------
+
+Hence for the above syntax, the syntax xml file would be:
+
+
+<syntax>
+    <rule name = "syntax">
+            <nonterm name = "rule" zero_or_more/>
+    </rule>
+
+    <rule name = "rule">
+        <nonterm name = "expr"/>
+    </rule>
+
+    <rule name = "expr">
+        <nonterm name = "term"/>
+        <zero_or_more>
+            <term value = "|"/>
+            <nonterm name = "term"/>
+        </zero_or_more>
+    </rule>
+
+    <rule name = "term">
+        <zero_or_more>
+            <nonterm name = "factor"/>
+        </zero_or_more>
+    </rule>
+
+    <rule name = "factor">
+        <oneof>
+            <term name = "identifier"/>
+            <term name = "string"/>
+            <expr>
+                <optional>
+                    <term value = "("/>
+                    <nonterm name = "expr"/>
+                    <term value = ")"/>
+                </optional>
+                <optional>
+                    <oneof>
+                        <term value = "*"/>
+                        <term value = "+"/>
+                    </oneof>
+                </optional>
+            </expr>
+            <optional>
+                <term value = "{"/>
+                <nonterm name = "expr"/>
+                <term value = "}"/>
+            </optional>
+        </oneof>
+    </rule>
+</syntax>
+
+
+Design:
+-------
+The main classes are:
+
+Document - This class is what holds the current document and the data.
+Nothing fancy.
+
+DocumentSyntax - Holds information on how the document is to be parsed and
+highlighted.
+
+DocumentEditor - The class that handles the GUI events and modified the
+document as necessary.
+
+DocumentRenderer - Renders the document.  This in other words is a layout
+manager for all the non-terminals and terminals in a parse tree.
+
+DocumentWindow - The canvas where the document is rendered and events are
+captured for the Editor.
+
+ParseTree - The parse tree that is maintained along with the document and
+which will be constantly modified as data is entered.
+
+Parser - This is what is responsible for building the initial parse tree
+given the input.
+
+Classes in detail:
+------------------
+
+The document syntax class describes how the editor will behave and how the
+renderer will draw the document.  The syntax file which is stored as a XML
+file should describe a grammar in BNF form.
+
+The grammar (which is a context free grammar will have terminals and
+non-terminals).  The idea is that we dont end up writing an all purpose
+purpose generator.  The terminals when typed in will result in creationg of
+template holders.  For example if in the following:
+
+statement = forstatement | whilestatement | .
+
+when "for" is typed, it should automatically generate "( ; true ; )" if this
+option is turned on.
+
+Similarly in the above, if "while" is typed then it should automatically
+generate "( true )" and set the cursor inside the brackets.
+
+In both the cases, "true" is inserted as this is the default value in the
+"place holder" as these place holders cannot be empty.

@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Sun Certified Enterprise Architect for Java 2 Platform, Enterprise Edition Technology</TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice 6.0  (Win32)">
+	<META NAME="CREATED" CONTENT="20030127;14463281">
+	<META NAME="CHANGEDBY" CONTENT="Mark Cade">
+	<META NAME="CHANGED" CONTENT="20030127;14473365">
+	<STYLE>
+	<!--
+		A:link { color: #0000ff }
+		A:visited { color: #800080 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" LINK="#0000ff" VLINK="#800080">
+<H1><FONT FACE="Courier New, Courier">Sun Certified Enterprise
+Architect for Java 2 Platform, Enterprise Edition Technology</FONT></H1>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">Part 1 of the Sun
+Certified Enterprise Architect for J2EE Exam, the multiple choice
+test, tested your knowledge in the areas of general architecture and
+J2EE.&nbsp; Part 2 of the exam will test whether you can apply that
+knowledge to a business problem and come up with the architecture and
+design of a system using J2EE. You will be required to read through
+requirements and business models, and then architect and design a
+system to support the requirements. Remember the most important
+requirement of all: it must be J2EE.<!-- Table of Contents --></FONT></FONT>
+</P>
+<H2><A NAME="toc"></A><FONT FACE="Courier New, Courier">Table of
+Contents:</FONT></H2>
+<P>This document is broken down into the following sections: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#back"><B>Background</B></A>
+		</P>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#req"><B>Requirements</B></A>
+		</P>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="#del"><B>Deliverables</B></A>
+		</P>
+	<LI><P><A HREF="#mark"><B>Marking</B></A> 
+	</P>
+</UL>
+<H2><A NAME="back"></A><!-- Background Section --><FONT FACE="Courier New, Courier">Background:</FONT></H2>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">FlyByNight, Inc.
+(FBN) has been in business for 10 years as a regional commuter
+airline. FBN does not follow industry standards and uses their own
+travel agents to book all airfares. The FBN travel agents use a
+legacy system written in Cobol that accesses an IMS database through
+3270 screens. FBN uses TransMaster to process the credit cards for
+flight purchases. FBN communicates with TransMaster via a secured
+socket across a dedicated line. TransMaster, in order to expand
+market share, is in the process of creating a new API that relies on
+the Internet. See the attached <A HREF="./TransMaster API Specification.html">TransMaster
+API Specification</A>.</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">FBN also has a
+frequent flyer mileage system that tracks mileage earned and used. To
+this point in FBN&rsquo;s existence, it is the only system that has a
+web interface. FBN travel agents with their 3270 terminal do not have
+access to this system. So, when customers decide to book awards
+travel the agent must place the customer on hold and go to a shared
+computer to retrieve the customers mileage account status. FBN does
+not wish to re-write this system at this time, but would like to have
+the content available to the customer using the web and the travel
+agent using an application. This system was developed using Perl,
+HTML, CGI and an Oracle database.</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">Recently, FBN
+decided to expand operations to fly nationally. In addition to FBN
+travel agents, they want to make it easier for consumers to book
+travel, so they would like a web site for booking airfare. FBN would
+like to make the user interface more appealing for their travel
+agents by replacing the 3270 terminal with one that can support a
+graphical user interface. FBN currently books 20,000 airfares per day
+and they are expecting that to increase 10 fold within the first
+month of going national. FBN will be spending $10 million on a
+national advertising campaign to coincide with the launching of their
+web site.</FONT></FONT> <BR>&nbsp; 
+</P>
+<P><A HREF="#toc"><I>Return to TOC<!-- Requirements Section --></I></A>
+</P>
+<H2><A NAME="req"></A><FONT FACE="Courier New, Courier">Requirements:</FONT></H2>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">A business analyst
+has worked with FBN to define the use cases and create a business
+domain model. You may not agree with the what the business analyst
+came up with, but the business analyst is no longer available to
+discuss the situation.&nbsp; This means you have all of the
+requirements you will get between the use cases and the interview
+with the CEO and CIO. The IMS database will be replaced with a
+relational database like Oracle, Sybase or Informix.</FONT></FONT> 
+</P>
+<P><A HREF="BusinessDomainModel.html"><FONT SIZE=2><FONT FACE="Courier New, Courier">Business
+Domain Model</FONT></FONT></A> 
+</P>
+<P><A HREF="UseCaseDiagram.html"><FONT SIZE=2><FONT FACE="Courier New, Courier">Use
+Case Diagram</FONT></FONT></A> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">Detailed Use Cases</FONT></FONT>
+<BR><FONT SIZE=2><FONT FACE="Courier New, Courier">&nbsp;&nbsp;&nbsp;
+<A HREF="./Prepare Itinerary Use Case.html">Prepare Itinerary</A></FONT></FONT>
+<BR><FONT SIZE=2><FONT FACE="Courier New, Courier">&nbsp;&nbsp;&nbsp;
+<A HREF="./Change Itinerary Use Case.html">Change Itinerary</A></FONT></FONT>
+<BR><FONT SIZE=2><FONT FACE="Courier New, Courier">&nbsp;&nbsp;&nbsp;
+<A HREF="./Price Itinerary Use Case.html">Price Itinerary</A></FONT></FONT>
+<BR><FONT SIZE=2><FONT FACE="Courier New, Courier">&nbsp;&nbsp;&nbsp;
+<A HREF="./Pay for Itinerary Use Case.html">Pay for Itinerary</A></FONT></FONT>
+<!-- Interview Section --></P>
+<H3><FONT FACE="Courier New, Courier"><FONT SIZE=3>Interview with the
+CEO and CIO of FBN:</FONT></FONT></H3>
+<P><BR><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+Can you tell us about current and future aircraft?</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CEO:</B> We
+currently have 10 Boeing 737s and ordered three new 757s. We hope to
+supplement our fleet with two large 767s in the near future to cover
+our most popular routes. Oh, and of course our four turbojets.</FONT></FONT>
+<BR>&nbsp; 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+One of the more complicated issues for airlines is their pricing
+model. How do you price your seats?</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CEO:</B>
+Complicated is right. FBN prides itself on a simple pricing scheme.
+Our market research has shown that the simple pricing is one of our
+biggest selling points. The simple pricing scheme consists of one
+price for first class and one price for coach.</FONT></FONT> <BR>&nbsp;
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+Is this regardless of destination and advance purchase?</FONT></FONT>
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CEO:</B> No,
+the flat price is per destination, but it does not matter when you
+purchase the ticket. So the person who purchases the ticket two weeks
+before the flight will pay the same as the person who walks up right
+before the flight takes off.</FONT></FONT> <BR>&nbsp; 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+How many concurrent users are you expecting in peak time?</FONT></FONT>
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CIO:</B> Our
+current system has 35 concurrent Travel Agents and we are projecting
+to have 20 Travel Agents and 200 web users concurrently using the
+system initially. These numbers are expected to increase monthly over
+the next couple of months to reach what we feel will be our maximum
+of 20 Travel Agents and 600 web users. We really need to ensure that
+the Travel Agents have the fastest system possible in order to meet
+the customer expectations, therefore we have a hard requirement that
+response time never exceed 5 seconds. We have assumed that most web
+users will still be using 28.8 modems, so response time cannot exceed
+10 seconds more than 20% of the time.</FONT></FONT> <BR>&nbsp; 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+What type of hardware will be used for deployment?</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CIO:</B> We
+have chosen an E10000 from Sun Microsystems as the machine for the
+application server, an E6500 to host the Oracle database and two
+450's for the web servers. All of these machines are in addition to
+the E5500 running the Frequent Flyer system.</FONT></FONT> <BR>&nbsp;
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+Speaking of the Frequent Flyer system, why are you not replacing it
+with this rewrite?</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CEO:</B> Let
+me handle this. We spent a half million dollars 6 months ago to get
+this system in place. I for one am not ready to throw it away and
+spend another half million to replace it. You will have to interface
+with what is there and if this project goes smoothly and the J2EE
+application servers prove to work, then we can talk about rewriting
+it.&nbsp; Our travel agents Java application must be able to access
+the system and we want our customers to have access through the
+Internet.</FONT></FONT> <BR>&nbsp; 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+Why do you use TransMaster and is it possible to replace?</FONT></FONT>
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CIO:</B>
+First, no it is not possible to replace. TransMaster was one of only
+two credit card processing companies that still supported the COBOL
+interface we needed. They are in the process of re-inventing
+themselves and creating a web presence so they can continue to thrive
+and open new markets. Since they have been there for us on the
+mainframe, we feel like to own it to them to use their new flagship
+product. You will need to do whatever is necessary to support their
+product.</FONT></FONT> <BR>&nbsp; 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>Interviewer:</B>
+Do you have service level agreements in place with TransMaster?</FONT></FONT>
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier"><B>FBN CIO:</B>
+Yes. They have committed to have their site available four 9's. Also,
+they have committed to a response time of no more than 3 seconds
+during peak time.</FONT></FONT> 
+</P>
+<P><A HREF="#toc"><I>Return to TOC<!-- DELIVERABLES SECTION --></I></A>
+</P>
+<H2><A NAME="del"></A><FONT FACE="Courier New, Courier">Deliverables:</FONT></H2>
+<P><FONT SIZE=2><FONT FACE="Courier New">It is your task to create an
+architecture and design for the Travel System with the given business
+domain model, requirements above and requirements in the use cases.
+The architecture must use the J2EE environment.&nbsp; All
+deliverables will be accepted as HTML only and each diagram must be
+UML compliant.</FONT></FONT> 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New">Create
+	a class diagram. It is not necessary to provide each method name and
+	attribute in the class.</FONT></FONT> 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New">Create
+	a Component diagram that shows all of the J2EE components used in
+	the system and their interaction. </FONT><FONT FACE="Courier New, Courier">For
+	example, what EJBs, Servlets, and/or JSPs might be needed?</FONT></FONT>
+		</P>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New">Create
+	either a Sequence or Collaboration diagram for each use case
+	provided.</FONT></FONT> 
+	</P>
+	<LI><P><FONT SIZE=2><FONT FACE="Courier New">Listing of any
+	assumptions made during the process of coming up with the
+	architecture and design.</FONT></FONT> 
+	</P>
+</UL>
+<P><FONT SIZE=2><FONT FACE="Courier New">Your architecture and design
+will be graded on how well it supports both web clients and
+application clients, as well as, supporting all of the requirements.</FONT></FONT>
+</P>
+<H4>Submitting Your Work</H4>
+<P><FONT FACE="Courier New, Courier">Failure to follow these rules
+will result in an immediate failure.</FONT> 
+</P>
+<P><FONT FACE="Courier New, Courier">When you have completed your
+solution, you should have an &quot;index.html&quot; that has your
+name, i.d., a link to the class diagram, a link to the component
+diagram, and a link to each of the sequence/collaboration diagrams.
+Build a jar archive that contains all html files. You must build a
+jar archive; do not send individual files.</FONT> 
+</P>
+<P><FONT FACE="Courier New, Courier">The name of your submission jar
+archive file MUST be derived from your i.d.. (Note that in the United
+States, your i.d. is your 9-digit social security number, e.g.
+555443333. Outside the U.S., your i.d. might be 9 digits, or it might
+be 2 characters followed by 7 digits, e.g. sp1234567.) Your archive
+filename MUST BE scea-AAAAAAAAA.jar, where AAAAAAAAA is your i.d..</FONT>
+</P>
+<P><A HREF="#toc"><I>Return to TOC<!-- Marking Section --></I></A> 
+</P>
+<H2><A NAME="mark"></A><FONT FACE="Courier New, Courier">Marking:</FONT></H2>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">This document
+describes how your submission will be marked, and the marking
+criteria which govern allocation of marks for the Sun Certified J2EE
+Architect submission. The first part describes the marking process,
+and the second describes how the marks are allocated.</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">The second part is
+divided into sections, the first describes general criteria which are
+expected to apply to all parts of the submission. Three sections
+follow which describe considerations that are specific to the three
+main tasks in the requirements: class diagram, component diagram, and
+sequence or collaboration diagrams.</FONT></FONT> 
+</P>
+<H4><FONT FACE="Courier New, Courier"><B>How The Assignment is Marked</B></FONT></H4>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">The marking is done
+is two phases.&nbsp; Your submission is passed to a human for
+grading. This process is time consuming and it is because this is
+done carefully and thoroughly that submissions take time to grade.
+The grading process is closely controlled to ensure consistency and
+fairness and is performed according to criteria detailed in the next
+section.</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">In addition to the
+submission, you will be required to take a written examination. This
+exam tests your understanding of your submission and asks you to
+justify a number of design choices embodied in that submission.
+Unless a clear requirement is given in the requirements, marks are
+not awarded for right choices in design issues, but rather for an
+understanding of the issues involved and for a coherent argument
+leading to your choice.</FONT></FONT> 
+</P>
+<P><B><FONT SIZE=4><FONT FACE="Courier New, Courier">Marking Criteria</FONT></FONT></B>
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">The following
+marking criteria are given as a guide. The numbers in parentheses
+beside each topic indicate the relative proportion of marks available
+in that area.</FONT></FONT> 
+</P>
+<P><FONT SIZE=2><FONT FACE="Courier New, Courier">Class diagram (44)</FONT></FONT>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New, Courier">diagram
+	conforms to UML (10)</FONT></FONT> 
+	</P>
+	<LI><P><FONT SIZE=2><FONT FACE="Courier New, Courier">diagram
+	addresses requirements (34)</FONT></FONT> 
+	</P>
+</UL>
+<P><BR><FONT SIZE=2><FONT FACE="Courier New, Courier">Component
+diagram (44)</FONT></FONT> 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New, Courier">diagram
+	conforms to UML (10)</FONT></FONT> 
+	</P>
+	<LI><P><FONT SIZE=2><FONT FACE="Courier New, Courier">diagram
+	addresses requirements (34)</FONT></FONT> 
+	</P>
+</UL>
+<P><BR><FONT SIZE=2><FONT FACE="Courier New, Courier">Sequence/Collaboration
+diagrams (12)</FONT></FONT> 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New, Courier">diagrams
+	conform to UML (3)</FONT></FONT> 
+	</P>
+	<LI><P><FONT SIZE=2><FONT FACE="Courier New, Courier">diagrams
+	addresses requirements (9)</FONT></FONT> 
+	</P>
+</UL>
+<P><A HREF="#toc"><I>Return to TOC</I></A> <BR>&nbsp; <BR>&nbsp; 
+</P>
+</BODY>
+</HTML>

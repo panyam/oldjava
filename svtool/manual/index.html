@@ -1,0 +1,658 @@
+<html>
+<head>
+<title>
+Service Validator Tool
+</title>
+</head>
+<body>
+<HR>
+<H1>Service Validator Design and User Manual</H1>
+
+<H2>
+<A HREF="mailto:spany_1@hotmail.com">Sri Panyam</A></H2>v1.40.025, 18
+August 2004
+<P><HR>
+<EM>Details download and installation instructions for the Service
+Validator Tool (SVT) used to assist validation and cleansing of CSOM data.</EM>
+<HR>
+<P>
+<H2><A NAME="toc1">1.</A> <A HREF="#s1">Introduction</A></H2>
+
+<UL>
+<LI><A HREF="#ss1.1">1.1 Preamble</A>
+<LI><A HREF="#ss1.2">1.2 Copyright Information</A>
+</UL>
+
+<P>
+<H2><A NAME="toc2">2.</A> <A HREF="#s2">Installation Instructions</A></H2>
+<UL>
+<LI><A HREF="#ss2.1">2.1 Warning</A>
+<LI><A HREF="#ss2.2">2.2 Minimum Requirements</A>
+<LI><A HREF="#ss2.3">2.3 Install the JRE</A>
+<LI><A HREF="#ss2.4">2.4 Install the XML API</A>
+<LI><A HREF="#ss2.5">2.5 Install Oracle JDBC Client</A>
+<LI><A HREF="#ss2.6">2.6 Download the Software</A>
+<LI><A HREF="#ss2.7">2.7 Clean Up/Uninstall</A>
+</UL>
+
+<P>
+<H2><A NAME="toc3">3.</A> <A HREF="#s3">Design Documentation</A></H2>
+
+<UL>
+<LI><A HREF="#ss3.1">3.1 Introduction</A>
+<LI><A HREF="#ss3.2">3.2 SVT Classes</A>
+    <ul>
+        <LI><A HREF="#ss3.2.1">3.2.1 ServiceView and ServiceData </li></a>
+        <LI><A HREF="#ss3.2.2">3.2.2 NetworkDiscoveryView and NetworkData </li></a>
+        <li><a href="#ss3.2.3">3.2.3 QueryView </li></a>
+        <li><a href="#ss3.2.4">3.2.4 TestViewA to E </li></a>
+        <LI><A HREF="#ss3.2.5">3.2.5 DBSControlPanel </li></a>
+        <LI><A HREF="#ss3.2.6">3.2.6 AppFrame </li></a>
+        <LI><A HREF="#ss3.2.7">3.2.7 SearchPanel </li></a>
+    </ul>
+</UL>
+
+<P>
+<H2><A NAME="toc4">4.</A> <A HREF="#s4">User Manual</A></H2>
+<UL>
+<LI><A HREF="#ss4.1">4.1 Introduction</A>
+<ul>
+    <!--<LI><A HREF="#ss4.1.1">4.1.1 CSOM Database Structure</A>-->
+</ul>
+</li>
+<LI><A HREF="#ss4.2">4.2 CSOM Database Structure</A>
+<LI><A HREF="#ss4.3">4.3 CSOM Connectivity</A></li>
+<LI>
+    <A HREF="#ss4.4">4.4 Service Validator</A>
+    <ul>
+        <LI><A HREF="#ss4.4.1">4.4.1 Service Extraction</A></li>
+        <LI><A HREF="#ss4.4.2">4.4.2 Data Presentation</A></li>
+        <LI><A HREF="#ss4.4.3">4.4.3 Data Search</A></li>
+    </ul>
+</li>
+<LI>
+    <A HREF="#ss4.5">4.5 Network Discovery Validator</A>
+</li>
+</UL>
+
+<P>
+<H2><A NAME="toc5">5.</A> <A HREF="#s5">Related Links and References</A></H2>
+
+<UL>
+<LI><A HREF="#ss5.1">5.1 Java Documentation</A>
+<LI><A HREF="#ss5.2">5.2 XML Documentation</A>
+<LI><A HREF="#ss5.3">5.3 Books</A>
+<LI><A HREF="#ss5.4">5.4 Miscellaneous Links</A>
+</UL>
+
+<P>
+<H2><A NAME="toc6">6.</A> <A HREF="#s6">Acknowledgements</A></H2>
+
+<!-- End of TOC and Start of Content -->
+
+<!-- Section 1 - Introduction -->
+<HR>
+<H2> <A NAME="Introduction"></A> <A NAME="s1">1.</A>
+    <A HREF="#toc1">Introduction</A>
+</H2>
+
+<H2>
+    <A NAME="Intro-Preamble"></A> <A NAME="ss1.1">1.1 Preamble</A>
+</H2>
+<P>This document will guide you through the steps used to install and
+configure the Service Validator Tool (SVT).  The tool has been developed in
+order to assist in data validation and data cleansing for the CSOM
+database.  In this section you will also find information
+in  laymans terms about the required components and how they piece
+together.  In order to help with the extension of this software,
+information regarding SVT's design has also been included.  This section
+highlights the design methodology, flow and relationships between objects
+and the various design strategies used.
+<P>There are, at the minimum, four software packages you'll need in order to
+get up and running.  These are as follows:
+<P>
+<UL>
+<LI>The Java Runtime Environment or the Java Development Kit (for extension
+and source code hacking).;</LI>
+<LI>The XML API for Java;</LI>
+<LI>The Oracle JDBC drivers;</LI>
+<LI>The actual software itself;</LI>
+</UL>
+
+
+<H2>
+    <A NAME="Intro-Copyright"></A> <A NAME="ss1.2">1.2 Copyright Information</A>
+</H2>
+<P>Copyright &copy; 2004 Sri Panyam
+<P>This document may be reproduced in whole or in part, without fee, subject
+to the following restrictions:
+<P>
+<UL>
+<LI>the copyright notice above and this permission notice must be
+preserved complete on all complete or partial copies;</LI>
+<LI>any translation or derived work must be approved by the author in
+writing before distribution;</LI>
+<LI>if you distribute this work in part, instructions for obtaining
+the complete version of this manual must be included, and a means for
+obtaining a complete version provided;</LI>
+<LI>small portions may be reproduced as illustrations for reviews or
+quotes in other works without this permission notice if proper citation
+is given.</LI>
+</UL>
+
+<!-- Section 2 - Installation Instructions -->
+
+<HR>
+<H2> <A NAME="Installation-Instructions"></A> <A NAME="s2">2.</A>
+    <A HREF="#toc2">Installation Instructions</A>
+</H2>
+<H2>
+    <A NAME="Installation-Warning"></A> <A NAME="ss2.1">2.1 Warning</A>
+</H2>
+These instructions are only basic guide and no responsibility is taken for
+any side effects that may be caused.
+
+<H2>
+    <A NAME="Installation-Requirements"></A>
+    <A NAME="ss2.2">2.2 Minimum Requirements</A>
+</H2>
+The minimum requirements are:
+<ul>
+<li>Java Runtime Environment or Java Development Kit: 1.4 or Higher</li>
+<li>Xerces XML4J API: 1.4 or Higher</li>
+<li>Oracle Client: 8.1.7 or Higher</li>
+<li>Oracle JDBC Libraries: 1.2 or Higher</li>
+</ul>
+
+<H2>
+    <A NAME="Installation-JREInstall"></A>
+    <A NAME="ss2.3">2.3 Install the JRE</A>
+</H2>
+<p>
+Firstly, a recent (1.4+) Java Runtime Environment (JRE) is required in the
+host machine.  If a valid JRE is not installed, please download and install
+one from <a href=http://java.sun.com/j2se/1.4.2/download.html>here</a>.  
+<p>
+If you wish to play around with the source code or compile it yourself, you
+will require the Java Development Kit (JDK) rather than the JRE.  The JDK
+includes a JRE and can be downloaded from the above mentioned site.
+<p>
+Once installed, please note the directory in which the JRE (or the JDK) has been installed.
+
+<H2>
+    <A NAME="Installation-XMLInstall"></A>
+    <A NAME="ss2.4">2.4 Install the XML API</A>
+</H2>
+<p>
+The XML libraries are one of the core libraries for the Service Validator
+Tool.  These libraries are used for all storage of data in both disk and in
+memory.  These can be downloaded from <a
+href=http://xml.apache.org/dist/xerces-j/>Apache XML4J Distribution
+Site</a>.  This site contains the latest versions.  Note that for all
+purposes (of the SVT use), only the binaries will suffice.  Download the
+binaries in the format you would find easiest to extract.  Once you
+downloaded, extract it into any directory.  <strong> Note: </strong>After
+extraction of the files, verify that the <strong>xerces.jar</strong> has
+been extracted.  Normally this file would be found in the
+XML_EXTRACTION_DIRECTORY itself.  If not, move the file xerces.jar to the
+extraction directory.
+
+<H2>
+    <A NAME="Installation-ORAInstall"></A>
+    <A NAME="ss2.5">2.5 Install Oracle JDBC Client</A>
+</H2>
+Install the Oracle client (8.1.7 or higher) by following the Oracle
+installations.  Also ensure that the file "classes12.zip" is installed in
+the ORACLE_INSTALLATION_DIRECTORY\jdbc\lib\ directory.
+
+<H2>
+    <A NAME="Installation-SWConfig"></A>
+    <A NAME="ss2.6">2.6 Configuring the Software</A>
+</H2>
+Once the above three core APIs and/or drivers have been installed, two
+scripts need to be edited to point to the directories where the above
+software are installed. These are as follows:
+
+<p>
+<li>
+<strong>Configuring Run Scripts:</strong>
+</li>
+<p>
+The run script, "run.bat", is located in the SVT installation directory
+(for example, c:\svtool or c:\program files\svtool).  Edit this file, and
+the contents are similar to the following:
+<pre>
+@echo off
+...
+...
+set JDK_LOC=c:\dev\j2eedk\jdk
+set XML_LOC=c:\dev\xerces-1_4_4
+set ORA_LOC=c:\orant
+...
+...
+</pre>
+Now in the above three lines, substitute the locations of JDK_LOC, XML_LOC
+and ORA_LOC variables to <strong>YOUR</strong> installation directories of
+the JDK (or JRE), XML and Oracle software, respectively.
+
+<p>
+<li>
+<strong>Configuring Make Scripts:</strong>
+</li>
+<p>
+If you are interested in compiling the source code then you MUST
+have the JDK installed.  Edit the make script, "make.bat", also located in
+the SVT Installation directory.  Like the run script, make.bat will also
+have the following lines:
+<pre>
+@echo off
+...
+...
+set JDK_LOC=c:\dev\j2eedk\jdk
+set XML_LOC=c:\dev\xerces-1_4_4
+set ORA_LOC=c:\orant
+...
+...
+</pre>
+Once again substitute the locations of JDK_LOC, XML_LOC and ORA_LOC
+variables to <strong>YOUR</strong> installation directories of the JDK, XML
+and Oracle software, respectively.
+
+<H2>
+    <A NAME="Installation-Cleanup"></A>
+    <A NAME="ss2.7">2.7 Cleanup/Uninstall</A>
+</H2>
+
+<p>
+The SVT and the XML software can be removed by deleting the entire
+directories.
+
+<p>
+In order to remove the JDK and Oracle software please consult the
+appropriate application user manuals.
+
+<!-- Section 3 - Design Documentation -->
+
+<HR>
+<H2> <A NAME="Design-Documentation"></A> <A NAME="s3">3.</A>
+    <A HREF="#toc3">Design Documentation</A>
+</H2>
+<H2>
+    <A NAME="DesignDocs-Intro"></A>
+    <A NAME="ss3.1">3.1 Introduction</A>
+</H2>
+<p>
+The CSOM database stores data in a non-relational way.  For example, if the
+business model consisted of Objects A and B with attributes A1 and A2
+belonging to Object A and attributes B1, B2 and B3 belonging to object B,
+the logical way to store this data would be to have two tables (one for
+each Object type) and store each attribute as a column in the table as
+shown below.
+
+<p>
+<center>
+<table border = 0>
+<td>
+    <table border = 1>
+    <thead> <strong> Table of "A" instances </strong> </thead>
+    <tbody>
+        <tr>
+            <td>Object Instance</td>
+            <td>Attribute A1</td>
+            <td>Attribute A2</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>123</td>
+            <td>cat</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>456</td>
+            <td>Dog</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>789</td>
+            <td>Sri</td>
+        </tr>
+    </tbody>
+    </table>
+</td>
+<td>
+    <table border = 1>
+    <thead> <strong> Table of "B" instances </strong> </thead>
+    <tbody>
+        <tr>
+            <td>Object Instance</td>
+            <td>Attribute B1</td>
+            <td>Attribute B2</td>
+            <td>Attribute B3</td>
+        </tr>
+        <tr>
+            <td>40</td>
+            <td>1321</td>
+            <td>Cricket Bat</td>
+            <td>Symmonds</td>
+        </tr>
+        <tr>
+            <td>41</td>
+            <td>4256</td>
+            <td>Skates</td>
+            <td>XX</td>
+        </tr>
+        <tr>
+            <td>42</td>
+            <td>9853</td>
+            <td>Swim Goggles</td>
+            <td>YYY</td>
+        </tr>
+        <tr>
+            <td>43</td>
+            <td>2311</td>
+            <td>Tennis Racquet</td>
+            <td>ZZZZ</td>
+        </tr>
+    </tbody>
+    </table>
+</td>
+</table>
+</center>
+<p>
+The above scheme's main advantage is that data can be extracted for a given
+object by a simple table lookup query (ignoring inter object dependancies
+for the time being).  However the disadvantage of this scheme is that as
+the object changes or as the number of objects in the business domain
+change, the database structure would have to be constantly changed to
+reflect the business logic.
+<p>
+In order to overcome this lack of flexibility, the CSOM database (in its
+simplest form) maintains all data in the same table :- The service_data
+table.  This is achieved by assigning each Object a unique class id (eg class_id
+of A = 1000 and class_id of B = 1100).  Also each attribute within an
+object is assigned a unique attribute id (eg A1 = 2001, A2 = 2002, B1 =
+2003, B2 = 2004, B3 = 2005).  Thirdly, each instance of an object itself is
+given an instance_id (similar to an address of a variable in memory).
+Hence the (instance_id, class_id, attribute_id) can uniquely identify an
+object's attributes.  Hence the service_data table will only need four
+basic columns to store all data as shown below:
+
+<p>
+<center>
+<table border = 0>
+<td>
+    <table border = 1>
+        <tr>
+            <td>Object Instance</td>
+            <td>Class ID</td>
+            <td>Attribute ID</td>
+            <td>Attribute Value</td>
+        </tr>
+        <tr> <td>1</td> <td>1000</td> <td>2001</td> <td>123</td> </tr>
+        <tr> <td>1</td> <td>1000</td> <td>2002</td> <td>Cat</td> </tr>
+        <tr> <td>2</td> <td>1000</td> <td>2001</td> <td>456</td> </tr>
+        <tr> <td>2</td> <td>1000</td> <td>2002</td> <td>Dog</td> </tr>
+        <tr> <td>3</td> <td>1000</td> <td>2001</td> <td>789</td> </tr>
+        <tr> <td>3</td> <td>1000</td> <td>2002</td> <td>Sri</td> </tr>
+        <tr> <td>40</td> <td>1100</td> <td>2003</td> <td>1321</td> </tr>
+        <tr> <td>40</td> <td>1100</td> <td>2004</td> <td>Cricket Bat</td> </tr>
+        <tr> <td>40</td> <td>1100</td> <td>2005</td> <td>Symmonds</td> </tr>
+
+        <tr> <td>41</td> <td>1100</td> <td>2003</td> <td>4256</td> </tr>
+        <tr> <td>41</td> <td>1100</td> <td>2004</td> <td>Skates</td> </tr>
+        <tr> <td>41</td> <td>1100</td> <td>2005</td> <td>XX</td> </tr>
+
+        <tr> <td>42</td> <td>1100</td> <td>2003</td> <td>9853</td> </tr>
+        <tr> <td>42</td> <td>1100</td> <td>2004</td> <td>Swim Goggles</td> </tr>
+        <tr> <td>42</td> <td>1100</td> <td>2005</td> <td>YYY</td> </tr>
+
+        <tr> <td>43</td> <td>1100</td> <td>2003</td> <td>2311</td> </tr>
+        <tr> <td>43</td> <td>1100</td> <td>2004</td> <td>Tennis Raquet</td> </tr>
+        <tr> <td>43</td> <td>1100</td> <td>2005</td> <td>ZZZ</td> </tr>
+    </table>
+</td>
+</table>
+</center>
+<p>
+In addition to this main data table, other tables would hold the
+information that would describe the class, attribute, service structures
+and other data required by the CSOM application.  Please refer to <A
+HREF="mailto:andrew.schwarz@team.telstra.com">Andrew Schwarz</A> for more
+information on this.
+<p>
+It is obvious that the price of this flexibility (in order to add or delete
+new classes or to modify existing classes), clarity is lost.  From the
+above table, it is not easy to picture the relationships between the
+various instances.  Especially with thousands of records describing
+hundreds of services and structures any manual drawing of object
+relationships becomes a very burdensome task.  The SVT does just this.  It
+crawls through the CSOM database, extracting all the necessary records from
+the service_data table (and other related tables) and generates a graphical
+tree view of the data.  With this graphical representation, the task of
+identify invalid nodes (or services) is simplified beyond belief.
+
+<H2>
+    <A NAME="UserManual-CSOMDBS"></A>
+    <A NAME="ss4.2">4.2 CSOM Database Structure</A>
+</H2>
+
+The diagrams in this section show the main relationships for the CSOM database
+used by the Service Validator Tool.
+<p>
+The following diagrams show the tables required to physically store the
+data in the CSOM database.  Note that in these diagrams, there is no
+indication of application specific storage.
+
+<p>
+<table>
+<thead>
+<strong>Tables for Physical Storage of Data</strong>
+</thead>
+<td width = 50%>
+<img width = 100% src = images/services_1.gif>
+</td>
+<td width = 50%>
+<img width = 100% src = images/services_2.gif>
+</td>
+</table>
+
+The following diagrams show the actual business/product model of the application
+and the objects it employs.  These descriptions are brief at best.  Please
+refer to <A HREF="mailto:andrew.schwarz@team.telstra.com">Andrew
+Schwarz</A> for more information on the structures and diagrams in this
+section.
+
+<p>
+<table>
+<tr> <strong>Ethernet MAN Product Model:</strong> </tr>
+<tr> <img src = images/ethernet_man.gif></tr>
+<tr> <strong>IP MAN Product Model:</strong> </tr>
+<tr> <img src = images/ip_man.gif></tr>
+<tr> <strong>WIP Product Model:</strong> </tr>
+<tr> <img src = images/wip_man.gif></tr>
+</table>
+
+<H2>
+    <A NAME="DesignDocs-SVTClasses"></A>
+    <A NAME="ss3.2">3.2 SVT Classes </A>
+</H2>
+
+<p>
+The tool is based around the following core packages:
+<li>
+<strong>Core Package</strong>: Consists of all classes and sub packages for doing basic
+application functions.
+</li>
+<li>
+<strong>Data Package</strong>: Consists of all classes and sub packages required to
+handle database management and data representation at an application level.
+</li>
+<li>
+<strong>GUI Package</strong>: Consists of all classes and sub packages required to perform
+graphical representation and manipulation of the data in the databases.
+</li>
+
+<p>
+Among these, the main classes are:
+<ul>
+<li> <b>svtool.data.Database</b>: Maintains a single connection to a database
+instance.</li>
+<li> <b>svtool.gui.views.DBView</b>: A view object that is "attached" to a
+Database instance in order to extract information from the database and
+present in application specific ways.  Some examples are ServiceView (for
+service data presentation), NetworkDiscoveryView (for presentation of
+devices info) etc. To create new Views, simply extend the DBView class and
+over-ride the following methods:
+<ul>
+<li>
+<b>public void viewClosing()</b>   -   Called when the view is to be closed.
+Gives tha view a chance to do any final cleanups.  Some such examples may
+be database closing routines etc.
+</li>
+<li>
+<b>public ListIterator searchItems(String type, Object criteria)</b>   -   Called
+when a list of all items within this view that match the given criteria
+need to be searched for.
+</li>
+<li>
+<b>public void showSearchItem(Object item)</b>   -   Called when an item that has
+been searched needs be highlighted or shown.
+</li>
+</ul>
+</li>
+<li> <b>svtool.data.DBViewData</b>: Used by DBView classes to maintain data in
+application specific ways.  The types of DBViewData depend on the
+respective DBView class.  For example, the ServiceView class uses the
+ServiceData class for its data storage and manipulation, whereas the
+NetworkDiscoveryView class uses the NetworkData class for its data
+manipulation.
+</li>
+</ul>
+
+<p>
+The advantages of this Database/DBView/DBViewData architecture is that
+virtually any kind of database can be supported by simply creating new
+matching view classes and their equivalent ViewData classes.
+
+<p> The core classes along with the DBView and DBViewData classes are
+described below:
+<H3>
+    <A NAME="DesignDocs-SVTClasses-ServiceView"></A>
+    <A NAME="ss3.2.1">3.2.1 ServiceView and ServiceData</A>
+</H3>
+This view shows the "service" contents in the CSOM databse.  This view
+extracts information from the service_data and other relevant tables and
+organises them in service trees and attribute tables.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-NetDiscView"></A>
+    <A NAME="ss3.2.2">3.2.2 NetworkDiscoveryView and NetworkData</A>
+</H3>
+shows the contents of the DM01 tables (the list of devices discovered by
+the previous network discovery process) and the actual devices "entered"
+into the CSOM database.  The view also allows the comparisons of the two
+tables to show and highlight the difference in devices between these
+tables.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-QueryView"></A>
+    <A NAME="ss3.2.3">3.2.3 Query </A>
+</H3>
+Allows queries to be entered and processed and also shows the results of
+these queries against the database.  This view has no explicit data object
+associated with it however, these can be added if necessary.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-TestViews"></A>
+    <A NAME="ss3.2.4">3.2.4 TestViewA to E</A>
+</H3>
+These 5 test view classes TestViewA, TestViewB, TestViewC, TestViewD and
+TestViewE are provided merely as illustrations of how to add new view
+classes to the application.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-DBSCPanel"></A>
+    <A NAME="ss3.2.5">3.2.5 DBSControlPanel</A>
+</H3>
+This gui class is responsible for managing the various views and
+allowing easy navigation between views.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-DBSCPanel"></A>
+    <A NAME="ss3.2.6">3.2.6 AppFrame </A>
+</H3>
+This main application frame gui class that acts as a mediator between
+variosu other classes.
+
+<H3>
+    <A NAME="DesignDocs-SVTClasses-SearchPanel"></A>
+    <A NAME="ss3.2.7">3.2.7 SearchPanel </A>
+</H3>
+One of the most important classes in the application, this panel allows
+navigation of search results within any given view.  As new views are
+selected (from the control panel), the SearchPanel object becomes notified
+of the new view and shows all the searchable items from that view.  Each
+view is responsible for indicating to the SearchPanel of all the items it
+can be searched by/for.
+
+<!-- Section 4 - SVT User Manual -->
+
+<HR>
+<H2> <A NAME="User-Manual"></A> <A NAME="s4">4.</A>
+    <A HREF="#toc4">User Manual</A>
+</H2>
+<H2>
+    <A NAME="UserManual-Intro"></A>
+    <A NAME="ss4.1">4.1 Introduction</A>
+</H2>
+<!--<H3>
+    <A NAME="UserManual-Intro-ExistingDBS"></A>
+    <A NAME="ss4.1.1">4.1.1 CSOM Database Structure</A>
+</H2>-->
+
+This section highlights the features and functionality of the SVT.  The SVT
+as mentioned earlier, allows the visual representation and validation of
+data stored in the CSOM database.  
+
+<H2>
+    <A NAME="UserManual-SVTGui"></A>
+    <A NAME="ss4.3">4.3 SVT GUI</A>
+</H2>
+The SVT GUI consists of three main sections.  The 
+
+<H2>
+    <A NAME="UserManual-CSOMConnectivity"></A>
+    <A NAME="ss4.3">4.3 CSOM Connectivity</A>
+</H2>
+
+<H2>
+    <A NAME="UserManual-ServiceValidator"></A>
+    <A NAME="ss4.4">4.4 Service Validator</A>
+</H2>
+
+<H3>
+    <A NAME="UserManual-ServiceValidator-ServiceExtraction"></A>
+    <A NAME="ss4.4.1">4.4.1 Service Extraction</A>
+</H3>
+
+<H3>
+    <A NAME="UserManual-ServiceValidator-DataPres"></A>
+    <A NAME="ss4.4.2">4.4.2 Data Presentation</A>
+</H3>
+
+<H3>
+    <A NAME="UserManual-ServiceValidator-DataSearch"></A>
+    <A NAME="ss4.4.3">4.4.3 Data Search</A>
+</H3>
+
+<H2>
+    <A NAME="UserManual-NetworkDiscovery"></A>
+    <A NAME="ss4.5">4.5 Network Discovery Validator</A>
+</H2>
+
+<!-- Section 5 - Related Links and References -->
+
+<!-- Section 6 - Acknowledgements -->
+
+</body>
+</html>

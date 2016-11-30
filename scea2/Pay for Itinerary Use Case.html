@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<TITLE>Use Case Specification: Pay for Itinerary</TITLE>
+</HEAD>
+<BODY LINK="#0000ff">
+<font face="Courier New,Courier">
+<h1>Travel System Re-engineering</h1>
+<h2>Use Case Specification: Pay for Itinerary</h2>
+
+<P>&nbsp;</P>
+<h3>Brief Description</h3>
+<P>The Pay for Itinerary use case will allow the customer or travel agent to
+select an itinerary and pay. </P>
+
+<P>&nbsp;</P>
+<h3>Flow of Events</h3>
+
+<h4>Basic Flow</h4>
+<P>Other use cases send priced itinerary </P>
+<P>System displays the itinerary and pricing</P>
+<P>Customer selects pay with credit card</P>
+<P>System returns the list of credit cards on file.  It only displays the last
+four digits of credit card, expiration date, and type.</P>
+<P>Customer selects the credit card</P>
+<P>System sends payment transaction to TransMaster and waits for authorization</P>
+<P>System sends email confirmation of successful payment to customers email address
+once credit authorization is returned</P>
+
+<h4>Alternative Flows</h4>
+<h5>Customer not logged in</h5>
+<P>Before the customer can pay for an itinerary, they must log in with their user
+id and password.  The Log In use case is executed and the system returns the list
+of itineraries. </P>
+<h5>Customer Selects Award Travel</h5>
+<P>Customer selects an existing itinerary.</P>
+<P>System displays the itinerary and pricing</P>
+<P>Customer selects award travel</P>
+<P>System verifies mileage availability and returns confirmation screen </P>
+<P>System sends email confirmation of successful award travel to customers email address</P>
+<h5>Credit Card Authorization Fails</h5>
+<P>Same as primary flow except email is of failed payment transaction</P>
+
+<P>&nbsp;</P>
+<h3>Special Requirements</h3>
+<h4>Security</h4>
+<P>All interaction with the customer and the system must be secured with SSL.</P>
+
+<P>&nbsp;</P>
+<h3>Pre-Conditions</h3>
+
+<h4>Customer Logged In</h4>
+<P>Customer has successfully logged in with a valid user id and password.</P>
+
+<h4>Customer has profile</h4>
+<P>Customer has an existing profile.</P>
+
+<h4>Customer has a priced itinerary</h4>
+
+<P>&nbsp;</P>
+<h3>Post-Conditions</h3>
+
+<h4>Paid Itinerary</h4>
+<P>A paid customer itinerary that contains the city, flight number, date, time,
+and seat number for each segment of the flight.  Email confirmation is sent to
+customer email address.</P>
+
+<P>&nbsp;</P>
+<h3>Uses Points</h3>
+<p>none</p>
+
+</font></FONT></BODY>
+</HTML>

@@ -1,0 +1,14 @@
+
+                        // also draw the cursor if it is here..
+                        // this is not a good way as we are doing
+                        // an if statement for each symbol...
+                        // later we shall replace this code with code that
+                        // draws all lines BEFORE the cursor THEN draws the
+                        // cursor and THEN draws all the LINES after the
+                        // cursor...
+                    if (hasCursor &&
+                        (line == cursor.currLine && pos == cursor.currPos))
+                    {
+                        g.drawLine(currX + 1, currY, currX + 1, currY + lineHeights[line]);
+                    }
+

@@ -1,0 +1,10 @@
+svtool
+svtool.core
+svtool.core.adt
+svtool.data
+svtool.data.models
+svtool.data.populators
+svtool.gui
+svtool.gui.anim
+svtool.gui.dialogs
+svtool.gui.views

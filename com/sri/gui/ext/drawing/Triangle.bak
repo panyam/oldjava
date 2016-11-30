@@ -1,0 +1,107 @@
+package com.sri.gui.ext.drawing;
+
+import java.awt.*;
+
+/**
+ * A Shape that represents a triangle.
+ * 
+ * The control point pretty much controls one of the angles.
+ */
+public class Triangle extends BoundedShape
+{
+		/**
+		 * Constructor.
+		 */
+	public Triangle()
+	{
+			// create the control point...
+		controlPoints = new short[1];
+		controlPoints[0] = (50 << 8) | 50;
+		super.setControllable(true);
+		super.setVisiblePoints(Shape.SHOW_DEFAULT_POINTS);
+	}
+	
+		/**
+		 * Paints this Shape object at the given location and
+		 * at the given mode.
+		 */
+	public void paint(Graphics g, int xOffset, int yOffset)
+	{
+			// first draw the background if it exists...
+		if (this.background != null && fillColor != null)
+		{
+			g.setColor(this.fillColor);
+			background.paint(g,null,bounds);
+		}
+
+		if (this.border != null && this.outlineColor != null)
+		{
+			g.setColor(outlineColor);
+				// Basically we now draw 3 lines...
+			int xp[] = new int[3];
+			int yp[] = new int[3];
+			xp[0] = (int)((Transform2D)transform).transform(Transform.X,-50,50);
+			yp[0] = (int)((Transform2D)transform).transform(Transform.Y,-50,50);
+			xp[1] = (int)((Transform2D)transform).transform(Transform.X,50,50);
+			yp[1] = (int)((Transform2D)transform).transform(Transform.Y,50,50);
+			xp[2] = (int)((Transform2D)transform).transform(Transform.X,0,-50);
+			yp[2] = (int)((Transform2D)transform).transform(Transform.Y,0,-50);
+			
+			border.paint(g,xp,yp,3);
+		}
+		
+		int mm = this.getMouseMode();
+		
+		if (mm == Shape.TRANSLATING_MODE || mm == Shape.SCALING_MODE)
+		{
+				// then draw the movement and sizing points...
+			int wh = this.getVisiblePoints();
+			if (wh == Shape.SHOW_DEFAULT_POINTS)
+			{
+				drawSizePoints(g);
+				drawControlPoints(g);
+			} else if (wh == Shape.SHOW_ROTATION_POINTS)
+			{
+				this.drawRotationPoints(g);
+			} else if (wh == Shape.SHOW_SHEARING_POINTS)
+			{
+				this.drawShearingPoints(g);
+			}
+		} else if (mm == Shape.SCALING_MODE)
+		{
+			drawSizePoints(g);
+		} else if (mm == Shape.SHEARING_MODE)
+		{
+			drawShearingPoints(g);
+		} else if (mm == Shape.ROTATING_MODE)
+		{
+			//System.out.println("In Here");
+			drawRotationPoints(g);
+		} else if (mm == Shape.CONTROLLING_MODE)
+		{
+					// then we draw the control points here....
+		}
+		
+			// now basically draw the transformed version of this
+			// shape.  we only draw the border of the shape around the transformation...
+		if (isTransforming()) drawTransformingOutline(g);
+	}
+	
+		/**
+		 * Draws the outline of this object in transforming mode.
+		 */
+	protected void drawTransformingOutline(Graphics g)
+	{
+		Transform2D t2d = (Transform2D)temp;
+		int xp[] = new int[3], yp[] = new int[3];
+		xp[0] = (int)t2d.transform(Transform.X,-50,50);
+		yp[0] = (int)t2d.transform(Transform.Y,-50,50);
+		xp[1] = (int)t2d.transform(Transform.X,50,50);
+		yp[1] = (int)t2d.transform(Transform.Y,50,50);
+		xp[2] = (int)t2d.transform(Transform.X,0,-50);
+		yp[2] = (int)t2d.transform(Transform.Y,0,-50);
+				
+		g.drawPolygon(xp,yp,3);
+		xp = yp = null;
+	}
+}

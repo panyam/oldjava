@@ -1,0 +1,440 @@
+/**
+ * This file describes the grammar for the ruleset of our firewall that we
+ * are simulating.
+ *
+ * Basically a ruleset has 3 tables for now.  We are pretty much copying
+ * the netfilter structure, but we may not have multiple chains as iptables
+ * as.  Why?  The reason we have chains is so we can isolate checks.  For
+ * example if a packet matches say the -p tcp match, then we can move to
+ * another chain, where all packets would have protocol == tcp.  However,
+ * the nature of our syntax is that we can isolate the checkswith the if
+ * statements.  So we only need a few predefined chains which can be
+ * invoked by the main firewall.  We can use the same chains as iptables
+ * uses.
+ */
+
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  OUTPUT_DIRECTORY = ".";
+}
+
+PARSER_BEGIN(JavaParser)
+
+package com.sri.netsim.firewall.parser;
+import com.sri.utils.*;
+import com.sri.utils.adt.*;
+import com.sri.netsim.routing.*;
+import com.sri.netsim.*;
+import com.sri.netsim.firewall.match.*;
+import com.sri.java.*;
+import com.sri.java.bytecode.*;
+import com.sri.java.expression.*;
+import com.sri.java.blocks.*;
+import com.sri.java.types.*;
+import com.sri.java.utils.*;
+import java.util.*;
+
+public class Parser
+{
+}
+
+PARSER_END(JavaParser)
+
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* RESERVED WORDS AND LITERALS */
+
+TOKEN :
+{
+    < COLON: ":">
+|   < SEMI_COLON: ":">
+|   < RULESET: "ruleset">
+|   < TABLE: "table">
+|   < CHAIN: "chain">
+|   < EQUALS: "=">
+|   < LPAREN: "(" >
+|   < RPAREN: ")" >
+|   < LBRACE: "{" >
+|   < RBRACE: "}" >
+|   < COMMA: "," >
+|   < LBRACKET: "[" >
+|   < RBRACKET: "]" >
+|   < SEMICOLON: ";" >
+|	< IF: "if">
+|	< ELSE: "else">
+|	< GOTO: "goto">
+|   < LOG_NOT: "!">
+|	< PLUS: "+">
+|	< MINUS: "-">
+|	< MUL: "*">
+|	< DIV: "/">
+|	< MOD: "
+|   < GT: ">" >
+|   < LT: "< " >
+|   < EQ: "==" >
+|   < LE: "< =" >
+|   < GE: ">=" >
+|   < NEQ: "!=" >
+|   < INCR: "++" >
+|   < DECR: "--" >
+|   < PLUSASSIGN: "+=" >
+|   < MINUSASSIGN: "-=" >
+|   < STARASSIGN: "*=" >
+|   < SLASHASSIGN: "/=" >
+|   < ANDASSIGN: "&=" >
+|   < ORASSIGN: "|=" >
+|   < XORASSIGN: "^=" >
+|   < REMASSIGN: "%=" >
+|   < LSHIFTASSIGN: "<<=" >
+|   < RSIGNEDSHIFTASSIGN: ">>=" >
+|   < LOG_OR: "||">
+|	< LOG_AND: "&&">
+|	< BIT_AND: "&">
+|	< BIT_OR: "|">
+|	< BIT_NOT: "~">
+|	< BIT_XOR: "^">
+|	< LSHIFT: "< < ">
+|	< RSHIFT: ">>">
+|	< DOT: ".">
+|   < ACCEPT: "ACCEPT">
+|	< DROP: "DROP">
+|	< RETURN: "return">
+|	< SNAT: "SNAT">
+|	< DNAT: "DNAT">
+|	< LOG: "log">
+|   < MODULE: "module">
+|	< STATE: "state">
+}
+
+/* LITERALS */
+TOKEN :
+{
+  < INTEGER_LITERAL:
+        <DECIMAL_LITERAL> (["l","L"])?
+      | <HEX_LITERAL> (["l","L"])?
+      | <OCTAL_LITERAL> (["l","L"])?
+  >
+|
+  < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+|
+  < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+|
+  < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+|
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < CHAR_LITERAL:
+      "'"
+      (   (~["'","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )
+      "'"
+  >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+/* IDENTIFIERS */
+TOKEN :
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < #LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+
+/********************************************************************
+ * THE FIREWALL LANGUAGE GRAMMAR BEGINS HERE                        *
+ ********************************************************************/
+/*
+ * Program structuring syntax follows.
+ */
+void RulesetDeclaration() :
+{}
+{
+   RULESET LBRACE
+
+    ( tableDeclaration() ) *
+
+   RBRACE
+}
+
+void tableDeclaration() :
+{}
+{
+   TABLE IDENTIFIER LBRACE
+
+    ( chainDeclaration() ) *
+
+   RBRACE
+}
+
+void chainDeclaration() :
+{}
+{
+    CHAIN IDENTIFIER LBRACE
+        statement()
+    RBRACE
+  "import" Name() [ "." "*" ] ";"
+}
+
+void statement() :
+{}
+{
+    |   actions()
+    |   filters()
+    |   filters()     actions()
+}
+
+void filters() :
+{}
+{
+        if_statement()
+    |   if_statement()      ELSE    filters()
+    |   if_statement()      LBRACE  statement()     RBRACE
+}
+
+void if_statement() :
+{}
+{
+    IF LPAREN  boolean_exp() RPAREN
+    LBRACE
+        statement()
+    RBRACE
+}
+
+void actions() :
+{}
+{
+    assign_statements()
+    return_statement()
+}
+
+assign_statements ::=   assign_statement:asgn SEMI_COLON
+                    {:
+                        RESULT = asgn;
+                    :}
+                    |   assign_statement:asgn SEMI_COLON assign_statements:asgns
+                    {:
+                        ((Expression)asgn).next = (Expression)asgns;
+                        RESULT = asgn;
+                    :}
+                    ;
+
+boolean_exp ::= 
+        |   relational_exp:exp
+            {:      RESULT = exp;    :}
+        |   boolean_exp:exp1            LOG_OR      boolean_exp:exp2
+            {:
+                RESULT = new
+                    BooleanExpression(BooleanExpression.OR,
+                                    exp1, (BooleanExpression)exp2);
+            :}
+        |   boolean_exp:exp1            LOG_AND     boolean_exp:exp2
+            {:
+                RESULT = new 
+                    BooleanExpression(BooleanExpression.AND,
+                                    exp1, (BooleanExpression)exp2);
+            :}
+        |   LPAREN     boolean_exp:bexp     RPAREN
+            {:      RESULT = bexp;          :}
+        |   LOG_NOT     boolean_exp:bexp
+            {:
+                RESULT = new UnaryExpression(UnaryExpression.NOT,
+                                             (ValuedExpression)bexp);
+            :}
+        ;
+
+relational_exp ::=
+      valued_exp:exp1           EQ              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.EQ,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           NEQ             valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.NE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           LT              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.LT,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           LE              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.LE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           GT              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.GT,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           GE              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.GE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    ;
+
+valued_exp ::=
+        identifier
+    |   INT_TOKEN
+    |   CHAR_TOKEN
+    |   MINUS                   unary_exp
+    |   identifier              DOT             identifier
+    |   LPAREN                 valued_exp      RPAREN
+    |                           BIT_NOT         valued_exp  
+    |   valued_exp              BIT_OR          valued_exp  
+    |   valued_exp              BIT_XOR         valued_exp  
+    |   valued_exp              BIT_AND         valued_exp  
+    |   valued_exp              LSHIFT          valued_exp  
+    |   valued_exp              RSHIFT          valued_exp  
+    |   valued_exp              PLUS            valued_exp  
+    |   valued_exp              MINUS           valued_exp  
+    |   valued_exp              MUL             valued_exp  
+    |   valued_exp              DIV             valued_exp  
+    |   valued_exp              MOD             valued_exp  
+    ;
+
+// snat and dnat are not implemented for the timebeing...
+// we will add it later...
+return_statement ::=
+            ACCEPT
+        |   ACCEPT state_option 
+        |   ACCEPT state_option module_option
+        |   RETURN 
+        |   DROP 
+        |   SNAT |   DNAT 
+        |   LOG
+        ;
+/**
+ * Tells what states of a connection we take.  The module_option can ONLY
+ * be used for ESTABLISHED and RELATED packets
+ */
+state_option ::= STATE EQUALS ;
+
+/**
+ * The module option is used for specifying which connection tracking
+ * module should be used.  This can only be invoked if the state option is
+ * used with established or established and related.  This is because after
+ * the IP level, we can have connections if we see packets both ways and so
+ * on. So we may want to track connections in both ways.  However, we may
+ * not want to do it two way, so we may not want to have a module take care
+ * of it and treat the packet as a one way thing.   So if the match option
+ * is invoked then the state_option MUST be called.  If the state option is
+ * invokved then  a default conn-track module will be invoked depending on
+ * the type of 'other' options
+ */
+module_option ::= MODULE EQUALS ;

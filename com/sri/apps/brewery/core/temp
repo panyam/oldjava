@@ -1,0 +1,64 @@
+
+
+        /**
+         * Set the field value.
+         */
+    public void setFieldValue(String fieldName, Object value)
+    {
+        int fieldIndex = getFieldIndex(fieldName);
+    }
+
+        /**
+         * Get the value of a field.
+         */
+    public Object getFieldValue(String fieldName)
+    {
+        return getFieldValue(getFieldIndex(fieldName));
+    }
+
+        /**
+         * Get the field value.
+         */
+    public Object getFieldValue(int index)
+    {
+        return null;
+    }
+
+        /**
+         * Get the field type.
+         */
+    public PersistableType getFieldType(String fieldName)
+    {
+        return getFieldType(getFieldIndex(fieldName));
+    }
+
+        /**
+         * Get the field type.
+         */
+    public PersistableType getFieldType(int index)
+    {
+        return null;
+    }
+
+        /**
+         * Gets a field iterator.
+         * Returns the (name, type, value) triplet in each
+         * "item" in the iterator.
+         */
+    //public Iterator fieldIterator();
+
+        /**
+         * Tells how many fields are there to be persisted.
+         */
+    public int fieldCount()
+    {
+        return 0;
+    }
+
+        /**
+         * Get the index of a given field.
+         */
+    public int getFieldIndex(String fieldName)
+    {
+        return -1;
+    }

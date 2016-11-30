@@ -1,0 +1,1 @@
+c:\dev\j2eedk\jdk\bin\java.exe -classpath c:\dev\xml4j\xmlParserAPIs.jar;c:\dev\xml4j\xercesImpl.jar;c:\orant\jdbc\lib\classes12.zip;ext\macos.jar;ext\napkinlaf.jar;ext\kunststoff.jar;package\svtool_0_12_005.jar;.  ServiceValidatorFrame config\config.xml

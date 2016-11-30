@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<TITLE>Use Case Specification: Price Itinerary</TITLE>
+<META NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Templates\req\rup_ucspec.dot">
+</HEAD>
+<BODY LINK="#0000ff">
+
+<font face="Courier New,Courier">
+
+<h1>Travel System Re-engineering</h1>
+<h2>Use Case Specification: Price Itinerary</h2>
+
+<P>&nbsp;</P>
+<h3>Brief Description</h3>
+<P>The Price Itinerary use case calculates the cost of the selected itinerary.
+It does so by pricing each segment of the itinerary and adding the prices together. </P>
+
+<P>&nbsp;</P>
+<h3>Flow of Events</h3>
+
+<h4>Basic Flow</h4>
+<P>Prepare Itinerary Use Case sends the prepared itinerary as input</P>
+<P>System calculates the price of each segment of the selected itinerary and returns the priced itinerary</P>
+
+<h4>Alternative Flows</h4>
+<h5>Changed Itinerary</h5>
+<P>System calculates the changed segment of the itinerary and returns the additional payment</P>
+
+<P>&nbsp;</P>
+<h3>Special Requirements</h3>
+<h4>Security</h4>
+<P>All interaction with the customer and the system must be secured with SSL.</P>
+
+<P>&nbsp;</P>
+<h3>Pre-Conditions</h3>
+
+<h4>Customer Logged In</h4>
+<P>Customer has successfully logged in with a valid user id and password.</P>
+<h4>Customer has profile</h4>
+<P>Customer has an existing profile.</P>
+<h4>Customer has a prepared itinerary</h4>
+
+<P>&nbsp;</P>
+<h3>Post-Conditions</h3>
+<h4>Priced Itinerary</h4>
+<P>A customer itinerary that has been priced and contains the city, flight number, date, time,
+and seat number for each segment of the flight.  </P>
+
+<P>&nbsp;</P>
+<h3>Uses Points</h3>
+<p>none</p>
+</FONT></font></BODY>
+</HTML>

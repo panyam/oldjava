@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : XMLPersistor.xsd
+    Created on : 5 August 2004, 12:06
+    Author     : Sri Panyam
+    Description: Purpose of XML Schema document follows.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://xml.netbeans.org/examples/targetNS"
+            xmlns="http://xml.netbeans.org/examples/targetNS"
+            elementFormDefault="unqualified">
+
+    <!-- 
+        TODO design your vocabulary here.
+        XML Schema Primer: http://www.w3.org/TR/xmlschema-0/
+        Structures recommendation: http://www.w3.org/TR/xmlschema-1/
+        Datatypes recommendation: http://www.w3.org/TR/xmlschema-2/
+    -->
+
+    <!-- The only element that can occur and its type. -->
+    <xsd:element name="Grinder" type="GrinderType"/>
+   
+    <!-- 
+        This type of the main root document that must be withing our
+        Grinder setup file if it is in XML format.
+    -->
+    <xsd:complexType name = "GrinderType">
+    </xsd:complexType>
+
+    <xsd:simpleType name="Array">
+        <xsd:attribute name = "ArrayType" type = "ID"/>
+        <xsd:attribute name = "length" type = "decimal"/>
+        <xsd:union memberTypes = "BoolList ByteList CharList ShortList IntList itemType = "PersistableType"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name = "PersistableType">
+    </xsd:simpleType>
+
+   <xsd:element name="version" type="xsd:string"/>
+
+</xsd:schema>

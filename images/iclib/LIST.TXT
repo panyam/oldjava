@@ -1,0 +1,410 @@
+TOTAL ICONS IN THE COLLECTION: 21,265 full       2,913 shareware
+TOTAL CATEGORIES IN COLLECTION:   276 full          36 shareware
+
+Marked categories are available in the SHAREWARE version
+
+
+
+
+Abstract ---------------------------- 2486
+
+  Alphanumeric                    795
+    0-9                       139 <--SHAREWARE
+    A                         136 <--SHAREWARE
+    B-H                       105
+    I-P                       116
+    Q-Z                       160
+    Question Marks             74
+    Other Symbols              65
+
+  Arrows and Pointers             625
+    Buttons                   121 <--SHAREWARE
+    Sets                      167
+    Assorted                  137
+    Decorative                103
+    Complex                    97
+
+  Corporate Trademarks             47
+  Fractals and Random              46
+  Quotes                           40
+
+  Shapes - 2D                     453
+    Circular                   70 <--SHAREWARE
+    Tiles                     140 
+    Stars and Hearts           62
+    Complex                    90
+    Assorted                   91
+
+  Shapes - 3D                     245
+    Cubes                      60 <--SHAREWARE
+    Spheres                    36
+    Buttons                    56
+    Complex                    93
+
+  Signs and Words                  94
+  Symbols                         141
+
+
+Activities -------------------------- 2084
+
+  Art and Literature             1240
+    Books                     204 <--SHAREWARE
+    Crayons and Markers        35
+    Drawing                   107
+    Drawing Symbols           118
+    Drawing Instruments        72
+    Painting                   80
+    Paints and brushes        161 <--SHAREWARE
+    Palletes and Easels        64
+    Pencils                   165
+    Pens                       80
+    The Bible                  28
+    Writing                   126
+
+  Eating Drinking and Parties     249
+    Drinks                     68 <--SHAREWARE
+    Food                       64
+    Fruit                      61
+    Other Things               56
+
+  Christmas                       105
+
+  Sports                          490
+    Archery and Darts          23 <--SHAREWARE
+    Athletics                  21
+    Baseball                   18
+    Basketball                 14
+    Bowls and Pool             32
+    Diving and Swimming        23
+    Football                   41
+    Golf                       64
+    Gym and Walking            23
+    Helmets                   103
+    Skiing and Skating         23
+    Teams                      60
+    Tennis and Table Tennis    32
+    Trophy and Award           13
+
+
+Things ------------------------------ 1575
+
+  Bridges and Towers               26 <--SHAREWARE
+  Buildings                       139
+  Clothing and Accessories         68
+  Containers                       49
+  Doors, Windows and Gates         80
+  Bomb Sequence                    44
+  Explosions and Fire              65
+
+  Flags and Banners               608
+    DD World Flag Collection  199
+    DD USSR Flag Collection    18
+    Labelled Flag Collection  141
+    Other Flag Collection     250
+
+  Furniture and Household          42 <--SHAREWARE
+  Locks, Keys and Safes            72
+  Tools and Implements            225
+  Toys                             39
+  Water                            45
+  Weapons                          22
+  Flipper                          22
+  Other Things                     29
+
+
+AudioVisual ------------------------- 903
+
+  Sound                           456
+    Microphones and Speakers   74 <--SHAREWARE
+    Musical Instruments        60
+    Musical Scores             99
+    Records, Casettes and CDs  78
+    Sound Equipment            59
+    Other                      86
+
+  Vision                          447
+    Cameras                    41 <--SHAREWARE
+    Film                       74
+    Lamps and Light Bulbs      85
+    Lens, Spectacles & Light  162
+    Projectors and Television  39
+    Telescopes and Microscopes 17
+    Video and Movie Cameras    29
+
+
+Cartoons ---------------------------- 1453
+
+  Animals                         336
+    Bears                      20 <--SHAREWARE
+    Cats                       78 <--SHAREWARE
+    Dogs                       38
+    Ducks and Birds            51
+    Mice                       46
+    Rabbits                    22
+    Turtles and Frogs          23
+    Other                      58
+
+  Heros and Villians              225
+  Human                           167
+
+  The Simpsons                    387
+    Bart                       49 <--SHAREWARE
+    Guess the Episode          25
+    Guests                     61
+    Homer                      25
+    Moes Tavern                 8
+    Neighbours                 35
+    Nuclear Plant              34
+    Public Figures             29
+    School                     15
+    Simpson Family             18
+    Towns People               55
+    TV and Bongo               33
+
+  The Simpsons - More             127
+    Ted's Set                 101
+    Assorted                   26
+
+  Smiley Faces                    127
+  Assorted                         84
+
+
+Communications ---------------------- 599
+
+  Data                            365
+    Local Area Network        183 <--SHAREWARE
+    Wide Area Network          23
+    Modems                    129
+    Assorted                   30
+
+  Ham Radio                        30
+  Service Providers                32
+  FAX                              30
+  Telephone                       142
+
+
+Computers --------------------------- 1834
+
+  Cards and Chips                  67 <--SHAREWARE
+  Installing                       36
+  Large Computers                  20
+  Personal Computers              266
+  Floppy Drives                    40
+  Floppy 3 inch                   183 <--SHAREWARE
+  Floppy 5 inch                   135
+  Game Playstations                14
+  Hard Disks                       97
+
+  Input Devices                   152
+    Keyboard                   57
+    Mouse and Joystick         58
+    Scanner                    37
+
+  Optical Disks                    36
+
+  Printers                        175
+    Printers                  150
+    Printed Labels             25
+
+  Screen Display                  613
+    Symbolic                  103 <--SHAREWARE
+    Windows                   199
+    MS-DOS 1                   79
+    MS-DOS 2                  120
+    MS-DOS 3                   49
+    MS-DOS 4                   63
+
+
+Software ---------------------------- 2230
+
+  Applications                   1190
+    Data Base                 101 <--SHAREWARE
+    Graphics                  143
+    Microsoft Word 6          236
+    Photoshop                  39
+    Presentations              37
+    Spread Sheets             176
+    Word Proc - Word           55
+    Word Proc - Wordperfect    45
+    Word Proc - Assorted       75
+    Other A-H                 122
+    Other I-P                  81
+    Other Q-Z                  80
+
+  Data Communications             112
+  Languages                       122
+
+  Operating Systems               203
+    Microsoft Windows          32 <--SHAREWARE
+    MS-DOS                    160
+    Assorted                   11
+
+  Cursors                         343
+    Windows Cursors           245
+    Windows NT Cursors         98
+
+  System Utilities                260
+    Group 1                   110
+    Group 2                    51
+    Group 3                    99
+
+
+SciFi ------------------------------- 186
+
+  Star Wars                       138
+  Star Trek                        45 <--SHAREWARE
+  Other                             3
+
+
+Games ------------------------------- 1807
+
+  Arcade and Action               156
+  Backgammon                       22
+  Chess and Checkers               95
+
+  Cards                           281
+    Poker                      30 <--SHAREWARE
+    Cards                     164
+    Card Decks                 87
+
+  Dice                            102
+
+  Dungeons and Dragons            411
+    Places and Artifacts       66 <--SHAREWARE
+    Heros and Villians        117
+    Weapons and Shields        88
+    Rings and Orbs             26
+    Wands and Potions          39
+    Arrows                     26
+    Clothing                   49
+
+  Grid                            212
+    Tetris                     66
+    Assorted                  146
+
+  Mahjong                          49
+
+  Monopoly                        317
+    Thimble                    28 <--SHAREWARE
+    Boot                       28
+    Cannon                     28
+    Car                        28
+    Dog                        28
+    Hat                        28
+    Horse                      28
+    Iron                       28
+    Ship                       28
+    Barrow                     28
+    Monopoly Items             37
+
+  Playstation                      30
+  Puzzles                          72
+  Assorted                         60
+
+
+Human ------------------------------- 1177
+
+  Faces                           594
+    Eyes and Ears             123
+    Female                     62 <--SHAREWARE
+    Female Photo              158
+    Male                      115
+    Male Photo                 59
+    Mouths                     38
+    Skulls                     39
+
+  Feet                             22
+  Hands                           189
+  People                          216
+  Office People                    53 <--SHAREWARE
+  Swimsuit                         43
+  Symbols                          45
+  Other Body Parts                 15
+
+
+Science ----------------------------- 444
+
+  Astronomy                       172 <--SHAREWARE
+  Chemistry                       148
+  Physics                          59
+  Mathematics                      28
+  Mystery Science Theatre          37
+
+
+Nature ------------------------------ 1012
+
+  Bears                            26
+  Birds                           135
+  Canine                           70 <--SHAREWARE
+  Feline                           68
+  Fish                             82
+  Insects Worms and Germs         126
+  Mice                             23
+  Rabbits                          32
+  Reptiles                         64
+  Scenery                          79
+  Trees and Plants                142
+  Weather                          46
+  Other Animals                   119
+
+
+Office ------------------------------ 2022
+
+  Calculator                       55 <--SHAREWARE
+  Calendar                         50
+  Card File                        79
+  Clipboard                        33
+  Clips, Pins and Tape             38
+  Clocks and Watches              167
+
+  File Folder                     271
+    3D Folders                 28 <--SHAREWARE
+    Colorful                  123
+    Groups                     51
+    Ordinary                   69
+
+  Filing Cabinets                  89
+
+  Mail                            225
+    Envelopes and Stamps      144
+    In-Out Trays               43 <--SHAREWARE
+    Postbox                    38
+
+  Newspapers                       21
+  Notebooks                        48
+
+  Paper                           426
+    3D Icons                   60
+    Groups                     78
+    Simple                    255
+    Assorted                   33
+
+  Trash Cans and Shredders         80
+  Leftovers                         4
+  Charts                          265
+  Money and Finance               171
+
+
+Transport --------------------------- 1338
+
+  Airplanes and Balloons          165 <--SHAREWARE
+  Bicycles                          9
+  Ford Cars                        55
+  Globes of the World             112
+  Maps                             56
+  Guages                           25
+  Offroad Vehicles                 25
+  Racing Cars                      18
+  Road Signs I                    159
+  Road Signs II                   104
+  Road Vehicles                    94
+  Rockets and Spacecraft           72
+  Ships, Boats and Submarines      67
+  Ship Accessories                 68
+  Railroad Companies              177
+  Rolling Stock and Signals       132
+
+256 Color Icon Samples -------------- 115
+
+  Misc Computer related            47 <--SHAREWARE
+  South Park                       68 <--SHAREWARE

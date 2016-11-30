@@ -1,0 +1,24 @@
+How to design the RTSP API??
+
+Basically, RTSP is a bit more versatile than HTTP.  There should be one
+client, that runs as the "master".  This will call other clients as
+necessary.  Requests should be called from the Client.sendRequest()
+function.  The request should be created by the calling function.
+
+Instead of the client listening to messages, we should have a client
+listener object that would process the responses (and requests) coming from
+the server.
+
+So for now we are writing a "MusicIndiaClient" which only does the basic
+music indiaonline stuff.  The good thing is that we are not hard coding any
+transport mechanisms (like UDP or TCP or what ever) into the RTSPClient
+class.  And the extra socket that is created (or a UDP listener) is also
+called and controlled by the ClientListener class rather than the
+RTSPClient class!!!
+
+So how about the problem of transport level communication.  For example the
+client receives and sends messages.  For example, the RTSPClient, how does
+it know wether to contact the server via TCP or UDP.  To solve, we have the
+inherited classes of RTSPClient, RTSPUDPClient and RTSPTCPClient.  And
+these will implement getNextMessage() and the sendMessage() functions.  So
+our listener will "use" one of these classes.

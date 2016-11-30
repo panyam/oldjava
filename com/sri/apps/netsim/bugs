@@ -1,0 +1,12 @@
+List of Known Bugs:
+
+1)  Cannot handle Loops, as no Spanning Tree or Routing Protocols are
+    implemented.
+
+2)  With Static routes, multiple matches arent taken into account.
+    For example if 10.0.0.0/8 is off one Firewall/Router, but one of the
+    hosts in this subnet hangs of a different path, the packet would be
+    dropped as the path would be unknown, even if there is a
+    defaultInterface set.
+
+3)  Firewall Rules.

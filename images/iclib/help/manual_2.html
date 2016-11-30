@@ -1,0 +1,147 @@
+<html>
+<head><title>IconLibrary.com: User Manual 2</title></head>
+<body bgcolor=#ffffff text=#000000 link=#0000FF vlink=#0000FF><center>
+
+<!-- ################# STYLE SHEETS  ################# -->
+
+<style type="text/css"><!--
+    .arial      { font-family: arial; font-size: 10pt; }
+    .arial2     { font-family: arial; font-size: 12pt; }    
+    .col        { font-size: 1pt; }
+    .menu       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+    .page       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #6BBDFF; }
+	.page:hover { text-decoration: underline; }    
+    .serif      { font-family: ms sans serif; font-size: 8pt; }
+    .serif2     { font-family: ms sans serif; font-size: 8pt; color: #000000; }    
+    .tab        { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+	.tab:hover  { text-decoration: underline; }
+--></style>
+
+<!-- ################# MAIN BODY ################# -->
+
+<table width=100% cellspacing=0 cellpadding=10 border=0>
+<tr><td valign=top class=arial><br>
+
+
+<!-- #### START OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+
+<!-- ################# PAGE HEADING ################# -->
+
+<a name="top">
+<font face="verdana, arial" size=4><b>Icon Library User Manual 2</b></font>
+
+<!-- ################# NAVIGATION ################# -->
+
+<hr width=100% noshade size=1 color=blue>
+
+<b>Section Contents</b>
+<ul>
+<b><li><a href="../UserManual.html">Table of Contents</a></b> <font class=serif>
+<br></font>
+<br>
+<b><li><a href="manual_1.html#starting">Starting Icon Library</a></b> <font class=serif>
+Shortcut, ICL file, Shareware Popup<br>
+Methods of starting Icon Library and reason for shareware popup.</font>
+<br><br>
+<b><li><a href="manual_2.html#options">Options Menu</a></b> <font class=serif>
+Loading Menus, Selecting Colors, Icon Menus<br>
+Registered/Shareware Menus, Background and BMP Transparency Colors. </font>
+<br><br>
+<b><li><a href="manual_3.html#icons">Icon Menus</a></b> <font class=serif>
+Displaying Icons, Extracting Icons, ICO, BMP, Shareware Topics.<br>
+Click on icons in display to extract and save the selected icon.</font>
+<br><br>
+<b><li><a href="manual_4.html#ini">Customise Your Menus</a></b> <font class=serif>
+Your Own Icons, Icolib.INI, Third Party Utilities<br>
+Add your own ICL files to the library, INI file format, useful icon programs.</font>
+<br><br>
+<b><li><a href="manual_5.html#help">More Help</a></b> <font class=serif>
+About Box, Web Page, Contact Details, Samples<br>
+What is in the About Box and the Icon Library web page, where to send email.</font>
+<br><br>
+</ul>
+<hr width=100% align=left noshade size=1 color=blue>
+
+<!-- ################# BODY OF TEXT ################# -->
+
+<div align=justify>
+<a name="options"><b>Options Menu</b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#top">Top</a><br>
+<ol>
+	<li>You can control come aspects of Icon Library by selecting items in the
+	<b>'Options'</b> menu. These options allow you to load new icon menus,
+	change colors, clear the application window or exit the program.
+	<br><br>
+	<img src="../images/manual_2.gif" border=1 alt="Options Menu">
+	<br><br>
+
+	<li>The <b>Registered Menu</b> option (also called <b>New Menu</b> in the
+	registered version of the application) allows you to reload the Icon Library
+	menu according to the contents of the <a href="manual_4.html#ini">icolib.ini</a>
+	file. Normally, you will not need this option unless you have added an
+	icon category, re-arranged the positions of the menu items, renamed any of
+	the categories, or put the <b>ICL</b> files into a different folder. In other
+	words, if you make any change to the <b>icolib.ini</b> file, this option lets
+	you reload the menus without having to restart the program. Here is a
+	description of the <a href="manual_4.html#ini">icolib.ini</a> file structure.
+
+	<li>The <B>Shareware Menu</b> option is only provided in the shareware
+	version of Icon Library because there is no need for it in the full
+	registered version. Many of the icon categories do not contain icons in
+	the shareware version. The icon categories actually containing icons have
+	<b>(SHAREWARE)</b> appended to the description so you can see at a glance
+	which ones they are. The categories with icons are scattered throughout the
+	overall collection and so may be inconvenient for you to find them all.
+	This option brings all the shareware categories together into a single reduced
+	set of menus by loading the special <b>icolib.in2</b> configuration file.
+	An example of the reduced menus looks like this.
+	<br><br>
+	<img src="../images/manual_3.gif" border=1 alt="Reduced Icon Menu">
+	<br><br>
+
+	<li>The <B>Background Color</b> option allows you to change the color of the
+	Icon Library window so you can see what the displayed icons look like with
+	different colored backgrounds. Often the icons will appear to be different
+	when the background has been changed. Selecting this menu will display the
+	standard Windows color selector. The default color is white.
+	<br><br>
+	<img src="../images/manual_4.gif" border=1 alt="Windows Color Sector">
+	<br><br>
+	Here are a couple of examples of how icons look with different backgrounds.
+	<br><br>
+	<img src="../images/manual_5.gif" border=1 alt="White Background">
+	<img src="../images/manual_6.gif" border=1 alt="Dark Green Background">
+	<br><br>
+
+	<a name="transparent"></a>
+	<li>When you <a href="manual_3.html#icons">save</a> an icon as a <b>BITMAP</B>
+	file, you can specify the color representing the <b>TRANSPARENCY COLOR</b>.
+	The <b>BMP Transparent Color</b> option lets you select this color. Where ever
+	this color appears in a BITMAP image, the background will show through. If you
+	save the icon as an <b>ICO</b> icon file, there is no need to specify this
+	color because it is already built into the <b>ICO</b> format. The same
+	Windows color selector shown in the previous paragraph is used to chose
+	a transparency color.
+
+	<li>The <b>Clear Screen</b> option simply removes all icons from the display
+	and only shows the selected (or default) background color. Icons are <b>NOT</b>
+	deleted from your disk drive by this option. Only the display is cleared.
+
+	<li>Click on <b>Exit</b> to close the program. Of course, you can also stop
+	the program with the standard Windows close control <b>X</b> located at the
+	top-right corner of the Icon Library window.
+
+	<li>Most of the remaining menu <a href="manual_3.html#icons">items</a> on the
+	Icon Library menu bar provide a means for selecting from the large number of
+	categories available with this icon collection.
+</ol>
+</div>
+
+<!-- #### END OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+<hr width=100% noshade size=1 color=blue>
+</td></tr>
+
+</table></center>
+</body></html>

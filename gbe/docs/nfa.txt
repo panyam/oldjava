@@ -1,0 +1,251 @@
+From comp.compilers,comp.theory:
+
+  Converting Regular Expressions to Non-Deterministic Finite Automata
+                                5/17/92
+
+(0) INTRODUCTION
+   Early this morning, I decided to write a demo program to illustrate a
+certain algorithm that efficiently converts Regular Expressions to NFA's.
+The algorithm is described below.
+
+(1) INPUT AND OUTPUT
+   Input is read from standard input (or from a file by file redirection).
+It consists of series of comma-separated equations of the form:
+
+                   Label = Regular Expression
+
+followed by a regular expression.  The expressions can consist of the
+following:
+
+           (0) 0 ------- to denote the empty set
+           (1) 1 ------- to denote the empty string
+           (2) x ------- any valid C identifier
+           (3) L ------- string literal
+           (3) [A] ----- denotes the regular expression 1 | A.
+           (4) A+ ------ denotes the regular expression A A*.
+           (5) A* ------ ITERATION (the set 1 | A | A A | A A A | ...)
+           (6) A | B --- ALTERATION (the union of A and B)
+           (7) A B ----- CONCATENATION
+
+For example, these are valid regular expressions:
+
+            (a [b+ a*])+ | c* a b
+
+            a* (b a*)*
+
+The output is a nondeterministic finite automaton listed in equational form.
+For example, the NFA corresponding the the regular expressions above are,
+respectively:
+
+            (a [b+ a*])+ | c* a b
+            0 =  a 1 |  c 2
+            1 =  1 |  a 1 |  b 1
+            2 =  a 3 |  c 2
+            3 =  b 4
+            4 =  1
+
+            a* (b a*)*
+            0 =  1 |  a 0 |  b 0
+
+The left-hand side represents the state, and the right hand side the sum of all
+the alterands.  A 1 by itself indicates that this state is an accepting state.
+For the first regular expression, 1, and 4 are both accepting states.  A
+symbol followed by a state number denotes an arc.  For example, state 0 has
+arc labeled a pointing to state 1, and an arc labeled c pointing to 2.
+The alterands are seperated from each other by a "|".
+
+State 0 is always the starting state.
+
+(2) DIAGNOSTICS
+Syntax errors, where they occur will be listed in the following form:
+
+            [Line Number] Descriptive error message.
+
+All error messages are directed to the standard error file, not to standard
+output file.
+
+(3) THE ALGORITHM
+   If E is a regular expression, then the reduction rules below will apply to
+it, for when E takes on the following forms:
+
+E = x         -> x 1
+E = L         -> L 1
+E = [A]       -> 1 | A
+E = A+        -> A (1 | E)
+E = A*        -> 1 | A E
+E = 0 | A     -> A
+E = A | 0     -> A
+E = A | B     -> a | b, where A and B reduce respectively to a and b.
+E = 0 A       -> 0
+E = 1 A       -> A
+E = [A] B     -> B | A B
+E = A+ B      -> A (B | E)
+E = A* B      -> B | A E
+E = (A | B) C -> A C | B C
+E = (A B) C   -> A (B C)
+
+They are NOT applied recursively to subexpressions in E, except where
+explicitly noted with the alternation A | B, but are only applied to the
+top-level expression.
+
+By induction, the following can be proven to be the general normal form for E:
+
+E = sum of terms of the form 1 and x A (0 = empty sum), where x is a literal or
+identifier.
+
+The expression, A, in each term of the form x A in the sum is considered a
+state in the NFA.  Each newly generated state is reduced to normal form in the
+same way, and this in turn may generate more new states.  When all the states
+that were generated from the top-level expression have been fully reduced, the
+result is an NFA representing the original expression.  This process will
+always halt.  In fact, I believe it is LINEAR with respect to the size of the
+expression's parse tree with a coefficient <= 2.
+
+For example, take this expression
+
+E = a* (b a*)*
+
+for convenience, represent it as follows:
+
+E = x0 x1, where x0 = a*, x1 = x2*, x2 = b x0
+
+then E reduces as follows:
+
+E = x0 x1 = a* x1 -> x3 | x1, where x3 = a E
+
+To derive E's normal form, x1 and x3 have to be reduced:
+x3: already reduced.
+x1 = x2* -> 1 | x2 x1
+
+Likewise, to derive x1's normal form, x2 x1 needs to be reduced:
+x2 x1 = (b x0) x1 -> b (x0 x1) = b E.
+
+Therefore x1 reduces to: x1 -> 1 | b E.
+Therefore E reduces to: E -> x3 | x1 -> a E | 1 | b E.
+
+The software I wrote takes these exact steps to derive an NFA from the
+regular expresison E.  And it just so happens that for this example, E is
+the only "state" in the NFA.
+
+You may want to compare this with the one described in Berry and Sethi ("From
+Regular Expressions to Deterministic Automata" Theoretical Computer Science
+1986).
+
+Their example: (a1 b2 | b3)* b4 a5 with the my algorithm will yield the
+automaton below (listed in equation form) with the starting state X0:
+
+                 X0 =   a1 X1 |       | b3 X0 | b4 X2
+                 X1 =           b2 X0
+                 X2 =                                  a5 X3
+                 X3 = 1
+
+(4) IMPLEMENTATION
+   This is a short summary detailing some of the internal workings of the
+program.
+
+   (a) Parsing
+   The parser used was generated by a proprietary algorithm based, in part,
+on the algorithm presented here.  It was derived from the syntax:
+
+   Ex = "0" | "1" | x | "(" Ex ")" | "[" Ex "]" | Ex "+" | Ex "*" |
+        Ex Ex | Ex "|" Ex.
+
+with the natural precedence rules used for resolving ambiguities.  This syntax
+results in a 2 state parser, with 1 ambiguous state resolved using an "action"
+table.  The action table is a function of the form:
+
+                     Lexical Item x Context --> Action
+
+that takes a lexical item, matches it against the current context and determines
+from that what to do next.
+
+   (b) Expression Indexing
+   The result of the parse is a directed acyclic graph representing the parse
+tree with all the repeating subtrees merged.  Each subexpression that is parsed
+is assigned an index and is stored in a hash table to facilitate the search for
+and elimination of duplicates.
+
+   The indexing function (i(E)) is inductively defined in terms of an indexing
+function (index(x)) on symbols as follows:
+
+                   i(0) = f0, i(1) = f1
+                   i(x) = f2(index(x))
+                   i([E]) = f3(i(E))
+                   i(E+) = f4(i(E))
+                   i(E*) = f5(i(E))
+                   i(E1 E2) = f6(i(E1), i(E2))
+                   i(E1 | E2) = f7(i(E1), i(E2))
+
+where the ranges of the functions f2, f3, f4, f5, f6, f7 and the values f0, f1
+constitute a disjoint partition of the range of the index function i(E).
+
+   For simplicity, f2, f3, f4, and f5 are chosen to be linear functions, and
+f6 and f7 are of the form:
+
+                       f(DUP(a, b))
+
+where f is linear, and where DUP maps: range(i) x range(i) onto range(i).
+
+   This method of indexing has the effect of giving only expressions with a
+similar syntatic form the same index.
+
+   (c) Equations
+   Each sub-expression is stored in an equation of one of the forms:
+
+        label = 0
+        label = 1
+        label = x, where x is a symbol
+        label = [label]
+        label = label+
+        label = label*
+        label = label | label
+        label = label label
+
+Corresponding to each equation will be one regular expression, listed on the
+right-hand side.  However, other expressions that are generated from this
+when the NFA is produced will also be associated with this equation.  Therefore,
+an equation will actually represent a class of expressions that have been
+determined to be equivalent up to the current point in processing.  This list
+will grow monotonically.
+
+   The routine
+
+          Label = MakeExp(L, Type, Args...)
+
+will generate a new expression of the given type and consisting of the given
+arguments and create a new equation (Label) for it, if L = -1.
+
+   If L >= 0, then the new expression will be created but will be substituted
+in the right hand side of the equation labeled L.  This is used to implement
+the reduction rules described previously.
+
+   (d) Generating the NFA
+   The routine
+
+                    FormState(Q)
+
+will apply the reduction algorithm described above to the expression on the
+right-hand side of the equation labeled Q until normal form is reached.
+The reduction algorithm will also be applied on each of the new states
+generated recursively until all states (i.e. all equations that represent
+states) have been fully reduced.
+
+   Reduction consists of replacing the right-hand side of the equation in
+question by a new regular expression, as outlined by the reduction rules
+above, until normal form is reached.
+
+   (e) Post-Processing
+   The NFA that is generated is usually very close to being a mininal finite
+state automaton.  But in general, it is not deterministic, so that it will be
+necessary to apply the standard algorithms to generate a minimal DFA from this
+NFA, if you want to obtain an DFA.  Since the rest of the algorithm is
+believed to be linear, if there's any exponential blow-up in the process of
+converting a regular expression to a DFA, it will occur in this step.
+
+   At the end, a stub routine WriteStates() will display the results of the
+conversion in the format described above.  This routine is what you would
+replace by the conversion routines.
+
+   (5) BUGS
+   There are none.  This algorithm was transcribed directly from a manual
+algorithm that is heavily used by me and second-nature to me.

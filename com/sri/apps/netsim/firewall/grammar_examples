@@ -1,0 +1,65 @@
+/**
+ * to make it simple we can start with 3 packet classes
+ * this way we could have something like chains but at the same time
+ * have different classes based on the if statements.
+ * No other chains or tables need to be defined...
+ * At the moment any other tables that are created are ignored.
+ * And empty table and chains will also be ignored...  We could enforce
+ * that new tables and chains not be created but we will leave it open for
+ * now.  So basically the firewall will call something like:
+ *
+ *      PaketMatcher.processPacket(packet, tableName, chainName,
+ *      caller_firewall, and other options)
+ *
+ * So far its only these 4 options.  And the parser file will create a
+ * "class" file with all the bytes.  So a bit of compilation will be on the
+ * way.  For now we are not doing any optimisations or anything.  Just do a
+ * naive byte code generation for the one method.
+ */
+
+ruleset {
+    table mangle
+    {
+        chain PREROUTING
+        {
+        }
+        chain POSTROUTING
+        {
+        }
+        chain OUTPUT
+        {
+        }
+        chain INPUT
+        {
+        }
+        chain FORWARD
+        {
+        }
+    }
+
+    table nat
+    {
+        chain PREROUTING
+        {
+        }
+        chain POSTROUTING
+        {
+        }
+        chain OUTPUT
+        {
+        }
+    }
+
+    table filter
+    {
+        chain OUTPUT
+        {
+        }
+        chain INPUT
+        {
+        }
+        chain FORWARD
+        {
+        }
+    }
+}

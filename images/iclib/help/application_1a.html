@@ -1,0 +1,146 @@
+<html>
+<head><title>IconLibrary.com: Application Notes 1a</title></head>
+<body bgcolor=#ffffff text=#000000 link=#0000FF vlink=#0000FF><center>
+
+<!-- ################# STYLE SHEETS  ################# -->
+
+<style type="text/css"><!--
+    .arial      { font-family: arial; font-size: 10pt; }
+    .arial2     { font-family: arial; font-size: 12pt; }    
+    .col        { font-size: 1pt; }
+    .menu       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+    .page       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #6BBDFF; }
+	.page:hover { text-decoration: underline; }    
+    .serif      { font-family: ms sans serif; font-size: 8pt; }
+    .serif2     { font-family: ms sans serif; font-size: 8pt; color: #000000; }    
+    .tab        { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+	.tab:hover  { text-decoration: underline; }
+--></style>
+
+<!-- ################# MAIN BODY ################# -->
+
+<table width=100% cellspacing=0 cellpadding=10 border=0>
+<tr><td valign=top class=arial><br>
+
+
+<!-- #### START OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+
+<!-- ################# PAGE HEADING ################# -->
+
+<a name="top">
+<font face="verdana, arial" size=4><b>Icon Library Application Notes 1a</b></font>
+
+<!-- ################# NAVIGATION ################# -->
+
+<hr width=100% noshade size=1 color=blue>
+
+<b>Section Contents</b>
+<ul>
+<b><li><a href="../UserManual.html">Table of Contents</a></b> <font class=serif>
+<br></font>
+<br>
+<b><li><a href="application_1.html#desktop">Changing Desktop Icons</a></b> <font class=serif>
+Drives, Folders, Files, Shortcuts, System<br>
+How to change various icons on your desktop.</font>
+<br><br>
+<b><li><a href="application_2.html#colors">Using More Than 16 Colors</a></b> <font class=serif>
+256 colors, 64K Colors, 16M Colors<br>
+Allow desktop to display icons with 256 or more colors</font>
+<br><br>
+<b><li><a href="application_3.html#active">Managing an Active Collection</a></b> <font class=serif>
+<br>
+How to manage icons you commonly use on your system.</font>
+<br><br>
+<b><li><a href="application_4.html#derive">Deriving Your Own Icons</a></b> <font class=serif>
+<br>
+Create your own icons using Icon Library as your starting point.</font>
+<br><br>
+<b><li><a href="application_5.html#bmp">Icons as Bitmaps</a></b> <font class=serif>
+Web Pages, ClipArt, Photoshop, GIF, JPG<br>
+Save icons as bitmap images and use them in web pages and other art.</font>
+<br><br>
+</ul>
+<hr width=100% align=left noshade size=1 color=blue>
+
+<!-- ################# BODY OF TEXT ################# -->
+
+<div align=justify>
+<a name="desktop"><b>Changing Desktop Icons</b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#top">Top</a><br>
+
+<p>
+<a href="application_1.html#desktop">Drives</a>&nbsp;&nbsp;
+<a href="application_1a.html#desktop">Folders</a>&nbsp;&nbsp;
+<a href="application_1b.html#desktop">Files</a>&nbsp;&nbsp;
+<a href="application_1c.html#desktop">Shortcuts</a>&nbsp;&nbsp;
+<a href="application_1d.html#desktop">System</a><br>
+</p>
+
+<p><a name="folders"><b>Folders</b></a>
+<br><br>
+You can change the icon for individual folders by following these steps.
+<ol>
+	<li>Chose a folder for which you want to change the icon, for example...
+	<br><br>
+	<img src="../images/application_6.gif" border=1 alt="Original Folder Icon">
+	<br><br>
+	<li>Create a file called <b>Desktop.ini</b> in the folder (<b>My Folder</b>)
+	for which the icon is to be changed. In this file add the following lines...
+	<pre>
+[.ShellClassInfo]
+IconFile=c:\icolib5_shar\256multi\256multi.icl
+IconIndex=2
+InfoTip=New Icon in this folder</pre>
+	For this example I am using the 3rd icon, as specified by the
+	<b>IconIndex</b> parameter (count starts at 0), in this Icon Library
+	category.
+	<br><br>
+	<img src="../images/application_2.gif" border=1 alt="Icon Library Display">
+	<br><br>
+	<li>You may want to make the <b>Desktop.ini</b> into a hidden file so it
+	is not accidently deleted. Right click on the <b>Desktop.ini</b> file and
+	select the <b>Properties</b> option at the bottom of the popup menu.
+	Select the <b>Hidden</b> attribute and click <b>OK</b>.
+	<br><br>
+	<img src="../images/application_7.gif" border=1 alt="Hidden Properties">
+	<br><br>
+	<li>The final step is to make the folder into a <b>System Folder</b>. You
+	can only do this from a DOS window. You can open a DOS window by selecting the 
+	<b>Run</b> option from the <b>Start</b> button menu. Type <b>command</b> into the
+	input field and click the <b>OK</b> button and a DOS window should appear.
+	For this example, type <b>attrib +s "c:\tmp3\My Folder"</b> to convert 
+	<b>My Folder</b> into a system folder.
+	<li>The icon for the folder should now have been changed wherever it appears.
+	<br><br>
+	<img src="../images/application_8.gif" border=1 alt="New Folder Icon">
+	<br><br>
+	<li>There is a small side effect in changing your folder into system folder.
+	If you try to move the folder to another location, you will get this warning
+	<br><br>
+	<img src="../images/application_9.gif" border=1 alt="System Folder Warning">
+	<br><br>
+	Unless the folder is a <b>real</b> system folder, just click the
+	<b>Yes</b> button.
+	<li>It is probably a good idea to have a single directory, for example,
+	<b>c:\icons</b> where you store any icon you use elsewhere in your system.
+	<li>I believe that Windows XP users can change folder icons simply by using
+	the Properties menu for the folder.
+	<li>You can now try changing the icons for some of your
+	<a href="application_1b.html#desktop">Files</a>.
+</ol>
+</p>
+</div>
+
+<!-- #### END OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+
+
+<!-- ################# RIGHT BAR ################# -->
+
+
+<hr width=100% noshade size=1 color=blue>
+</td></tr>
+
+</table></center>
+</body></html>

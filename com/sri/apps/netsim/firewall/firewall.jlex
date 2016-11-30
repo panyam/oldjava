@@ -1,0 +1,172 @@
+package com.sri.netsim.firewall.parser;
+
+import java_cup.runtime.*;
+import com.sri.utils.*;
+import com.sri.utils.adt.*;
+import com.sri.netsim.routing.*;
+import com.sri.netsim.*;
+import com.sri.netsim.firewall.match.*;
+import com.sri.java.*;
+import com.sri.java.bytecode.*;
+import com.sri.java.expression.*;
+import com.sri.java.blocks.*;
+import com.sri.java.types.*;
+import com.sri.java.utils.*;
+import java.util.*;
+
+%%
+%class Scanner
+%cup
+%public
+%line
+%char
+%state COMMENT
+ALPHA=[A-Za-z]
+DIGIT=[0-9]
+NONNEWLINE_WHITE_SPACE_CHAR=[ \t]
+WHITE_SPACE_CHAR=[ \n\t\r]
+STRING_TEXT=(\\\"|[^\n\"]|\\{WHITE_SPACE_CHAR}+\\)*
+COMMENT_TEXT=([^/*\n]|[^*\n]"/"[^*\n]|[^/\n]"*"[^/\n]|"*"[^/\n]|"/"[^*\n])*
+%%
+\/\/[^\n\r]*$               {                                   }
+{WHITE_SPACE_CHAR}+         {                                   }
+<YYINITIAL> "/*"            { yybegin(COMMENT);                 }
+<COMMENT>   "/*"            {                                   }
+<COMMENT>   "*/"            { yybegin(YYINITIAL);               }
+<COMMENT> {COMMENT_TEXT}    {                                   }
+"SNAT"              {
+                        return new Symbol(Symbols.SNAT);
+                    }
+"DNAT"              {
+                        return new Symbol(Symbols.DNAT);
+                    }
+"LOG"               {
+                        return new Symbol(Symbols.LOG);
+                    }
+"DROP"              {
+                        return new Symbol(Symbols.DROP);
+                    }
+"RETURN"            {
+                        return new Symbol(Symbols.RETURN);
+                    }
+"RETURN"            {
+                        return new Symbol(Symbols.RETURN);
+                    }
+"ACCEPT"            {
+                        return new Symbol(Symbols.ACCEPT);
+                    }
+"state"             {
+                        return new Symbol(Symbols.STATE);
+                    }
+"module"            {
+                        return new Symbol(Symbols.MODULE);
+                    }
+"ruleset"           {
+                        return new Symbol(Symbols.RULESET);
+                    }
+"table"             {
+                        return new Symbol(Symbols.TABLE);
+                    }
+"+"                 {
+                        return new Symbol(Symbols.PLUS);
+                    }
+"-"                 {
+                        return new Symbol(Symbols.MINUS);
+                    }
+"*"                 {
+                        return new Symbol(Symbols.MUL);
+                    }
+"/"                 {
+                        return new Symbol(Symbols.DIV);
+                    }
+"%"                 {
+                        return new Symbol(Symbols.MOD);
+                    }
+"("                 {
+                        return new Symbol(Symbols.LPAREN);
+                    }
+")"                 {
+                        return new Symbol(Symbols.RPAREN);
+                    }
+"{"                 {
+                        return new Symbol(Symbols.LBRACE);
+                    }
+"}"                 {
+                        return new Symbol(Symbols.RBRACE);
+                    }
+"<<"                {
+                        return new Symbol(Symbols.LSHIFT);
+                    }
+">>"                {
+                        return new Symbol(Symbols.RSHIFT);
+                    }
+"||"                {
+                        return new Symbol(Symbols.LOG_OR);
+                    }
+"!"                 {
+                        return new Symbol(Symbols.LOG_NOT);
+                    }
+"&&"                {
+                        return new Symbol(Symbols.LOG_AND);
+                    }
+"|"                 {
+                        return new Symbol(Symbols.BIT_OR);
+                    }
+"&"                 {
+                        return new Symbol(Symbols.BIT_AND);
+                    }
+"^"                 {
+                        return new Symbol(Symbols.BIT_XOR);
+                    }
+"~"                 {
+                        return new Symbol(Symbols.BIT_NOT);
+                    }
+":"                 {
+                        return new Symbol(Symbols.COLON);
+                    }
+"if"                {
+                        return new Symbol(Symbols.IF);
+                    }
+"else"              {
+                        return new Symbol(Symbols.ELSE);
+                    }
+";"                 {
+                        return new Symbol(Symbols.SEMI_COLON);
+                    }
+"goto"              {
+                        return new Symbol(Symbols.GOTO);
+                    }
+"chain"             {
+                        return new Symbol(Symbols.CHAIN);
+                    }
+"<"                 {
+                        return new Symbol(Symbols.LT);
+                    }
+">"                 {
+                        return new Symbol(Symbols.GT);
+                    }
+"="                 {
+                        return new Symbol(Symbols.EQUALS);
+                    }
+"<="                {
+                        return new Symbol(Symbols.LE);
+                    }
+">="                {
+                        return new Symbol(Symbols.GE);
+                    }
+"=="                {
+                        return new Symbol(Symbols.EQ);
+                    }
+"!="                {
+                        return new Symbol(Symbols.NEQ);
+                    }
+"."                 {
+                        return new Symbol(Symbols.DOT);
+                    }
+[a-zA-Z][a-zA-Z0-9_]*   {
+                            return new Symbol(Symbols.identifier);
+                        }
+.                   {
+                        System.out.println("Invalid token: " + yytext());
+                        return new Symbol(Symbols.ERROR_TOKEN);
+                    }

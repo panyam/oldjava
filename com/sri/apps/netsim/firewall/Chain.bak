@@ -1,0 +1,152 @@
+
+
+package com.sri.netsim.firewall;
+
+import com.sri.utils.*;
+import com.sri.utils.adt.*;
+import com.sri.netsim.routing.*;
+import com.sri.netsim.firewall.target.*;
+import com.sri.netsim.firewall.match.*;
+import com.sri.netsim.*;
+
+/**
+ * A firewall chain that resides in a table.
+ * Used in the rule.
+ */
+public class Chain
+{
+        /**
+         * Tells if this chain can be deleted or not.
+         */
+    boolean isDeleteable = true;
+
+        /**
+         * The rules in this table.
+         */
+    Rule rules[] = new Rule[10];
+
+        /**
+         * Number of rules in this table.
+         */
+    int nRules = 0;
+
+        /**
+         * What is the default action to take.
+         */
+    JumpTarget defaultPolicy = BasicTarget.ACCEPT;
+
+        /**
+         * Name of the table.
+         * For eg, nat, mangle and so on...
+         */
+    public String name = "";
+
+        /**
+         * This is a unique ID for the table within
+         * a firewall.
+         */
+    public int id;
+
+        /**
+         * Default constructor.
+         */
+    protected Chain()
+    {
+    }
+
+        /**
+         * Constructor.
+         */
+    public Chain(int id, String name)
+    {
+        this(id, name, true);
+    }
+
+        /**
+         * Constructor.
+         */
+    public Chain(int id, String name, boolean isDeleteable)
+    {
+        this.id = id;
+        this.name = name;
+        this.isDeleteable = isDeleteable;
+    }
+
+        /**
+        /* Deletes all the rules.
+         */
+    public void flushRules()
+    {
+        for (int i = 0;i < nRules;i++)
+        {
+            rules[i] = null;
+        }
+        nRules = 0;
+    }
+
+        /**
+         * Delete a given rule.
+         * Returns true if rule was found and deleted
+         * false otherwise.
+         */
+    public boolean deleteRule(Rule rule)
+    {
+        for (int i = 0;i < nRules;i++)
+        {
+            if (rules[i].equals(rule))
+            {
+                System.arraycopy(rules, i + 1, rules, i, nRules - (i + 1));
+                nRules --;
+                rules[nRules] = null;
+                return true;
+            }
+        }
+        return false;
+    }
+
+        /**
+         * Delete a given rule.
+         */
+    public void deleteRule(int index)
+    {
+        rules[index] = null;
+        System.arraycopy(rules, index + 1, 
+                         rules, index,
+                         nRules - (index + 1));
+        rules[nRules] = null;
+        nRules--;
+    }
+
+        /**
+         * Inserts a new chain at the given spot.
+         */
+    public void insertRule(Rule rule, int index)
+    {
+            // if table already exists then
+            // dont do anything...
+        if (rules.length <= nRules)
+        {
+            Rule r[] = rules;
+            rules = null;
+            rules = new Rule[nRules + 2];
+            System.arraycopy(r, 0, rules, 0, nRules);
+            r = null;
+        }
+
+        if (index == nRules) rules[nRules] = rule;
+        else
+        {
+            System.arraycopy(rules, index, rules, index + 1,nRules-index);
+            rules[index] = rule;
+        }
+        nRules++;
+    }
+
+        /**
+         * Add a new rule to this chain.
+         */
+    public void addRule(Rule rule)
+    {
+        insertRule(rule, nRules);
+    }
+}

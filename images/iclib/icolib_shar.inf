@@ -1,0 +1,15 @@
+[version]
+signature="$CHICAGO$"
+SetupClass=BASE
+
+[DefaultInstall]
+AddReg=Icolib.AddReg
+
+[Icolib.AddReg]
+HKCR,".icl",,0,"iclfile"
+HKCR,"iclfile",,0,"Icon Library (shareware)"
+HKCR,"iclfile\DefaultIcon",,0,"%1"
+HKCR,"iclfile\shell",,0,""
+HKCR,"iclfile\shell\open",,0,""
+HKCR,"iclfile\shell\open\command",,0,"%1%\icolib5_shar.exe %1"
+HKCR,"iclfile\shell\open\command",icolib,0,"%1%\icolib5_shar.exe %1"

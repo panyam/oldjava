@@ -1,0 +1,68 @@
+
+<syntax>
+        <!--
+            This section would describe the terminals and what
+            the regular expression for a given token would be!!
+         -->
+    <terminals>
+        <terminal name = "OPEN_BRACE" value = "{"/>
+        <terminal name = "CLOSE_BRACE" value = "}"/>
+        <terminal name = "STAR" value = "*"/>
+        <terminal name = "PLUS" value = "+"/>
+        <terminal name = "OR" value = "|"/>
+        <terminal name = "digit" value = "[0-9]"/>
+        <terminal name = "identifier" value = "[_a-zA-Z][_a-zA-Z0-9]*"/>
+        <terminal name = "string" value = "&quot;[^\n\r&quot;]*&quot;"/>
+    </terminals>
+
+    <rule name = "syntax">
+        <zero_or_more>
+            <nonterm name = "rule"/>
+        </zero_or_more>
+    </rule>
+
+    <rule name = "rule">
+        <term name = "identifier"/>
+        <term value = ":"/>
+        <nonterm name = "expr"/>
+    </rule>
+
+    <rule name = "expr">
+        <nonterm name = "term"/>
+        <zero_or_more>
+            <term name = "OR"/>
+            <nonterm name = "term"/>
+        </zero_or_more>
+    </rule>
+
+    <rule name = "term">
+        <zero_or_more>
+            <nonterm name = "factor"/>
+        </zero_or_more>
+    </rule>
+
+    <rule name = "factor">
+        <oneof>
+            <term name = "identifier"/>
+            <term name = "string"/>
+            <expr>
+                <optional>
+                    <term value = "("/>
+                    <nonterm name = "expr"/>
+                    <term value = ")"/>
+                </optional>
+                <optional>
+                    <oneof>
+                        <term name = "STAR"/>
+                        <term name = "PLUS"/>
+                    </oneof>
+                </optional>
+            </expr>
+            <optional>
+                <term value = "{"/>
+                <nonterm name = "expr"/>
+                <term value = "}"/>
+            </optional>
+        </oneof>
+    </rule>
+</syntax>

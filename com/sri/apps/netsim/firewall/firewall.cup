@@ -1,0 +1,445 @@
+/**
+ * This file describes the grammar for the ruleset of our firewall that we
+ * are simulating.
+ *
+ * Basically a ruleset has 3 tables for now.  We are pretty much copying
+ * the netfilter structure, but we may not have multiple chains as iptables
+ * as.  Why?  The reason we have chains is so we can isolate checks.  For
+ * example if a packet matches say the -p tcp match, then we can move to
+ * another chain, where all packets would have protocol == tcp.  However,
+ * the nature of our syntax is that we can isolate the checkswith the if
+ * statements.  So we only need a few predefined chains which can be
+ * invoked by the main firewall.  We can use the same chains as iptables
+ * uses.
+ */
+package com.sri.netsim.firewall.parser;
+
+import com.sri.utils.*;
+import com.sri.utils.adt.*;
+import com.sri.netsim.routing.*;
+import com.sri.netsim.*;
+import com.sri.netsim.firewall.match.*;
+import com.sri.netsim.firewall.*;
+import com.sri.java.*;
+import com.sri.java.bytecode.*;
+import com.sri.java.expression.*;
+import com.sri.java.blocks.*;
+import com.sri.java.types.*;
+import com.sri.java.utils.*;
+import java.util.*;
+
+action code
+{:
+        /**
+         * Adds a new error.
+         */
+    public void addError(String error) throws Exception
+    {
+        parser.addError(error);
+    }
+:};
+
+parser code {:
+        /**
+         * The main function.
+         */
+    public Expression mainFunction = null;
+
+        /**
+         * The class that is output after the parsing is done.
+         */
+    public SJavaClass outputClass = null;
+
+        /**
+         * The current table that we are working on.
+         */
+    public Table currTable = null;
+
+        /**
+         * The current chain in the current table that we are
+         * referring to.
+         */
+    public Chain currChain = null;
+
+        /**
+         * Our tables.
+         */
+    Vector tables = new Vector();
+
+        /**
+         * Name of the currr chain.
+         */
+    public String currChainName = "";
+
+    public void generateCode()
+    {
+            // create the main "switch" expresssion..
+        mainExp = new SwitchExpression(tables.size());
+
+        outputClass.addMethod(new SJavaMethod(outputClass));
+
+            // here is where generate the code...
+            // How to generate the code??
+            // For now we generate a function of
+            // each and every chain...
+            // What needs to be done to generate the code?
+
+            // first creat the first function which call the other
+            // functions when called...
+    }
+
+        /**
+         * Add a new table.
+         * Should be called only if a table doesnt already exist.
+         */
+    public Table addTable(String name)
+    {
+        Table newTable = new Table(name);
+        tables.addElement(newTable);
+        return newTable;
+    }
+
+        /**
+         * Add a new table.
+         */
+    public void addTable(Table t)
+    {
+        tables.addElement(t);
+    }
+
+        /**
+         * Get the table at the given index.
+         */
+    public Table getTable(int tableIndex)
+    {
+        return (Table)tables.elementAt(tableIndex);
+    }
+
+        /**
+         * Given a table name, return its index.
+         */
+    public Table getTable(String name)
+    {
+        for (Enumeration en = tables.elements();en.hasMoreElements();)
+        {
+            Table t = (Table)en.nextElement();
+            if (t.equals(name)) return t;
+        }
+        return null;
+    }
+
+        /**
+         * Given a table name, return its index.
+         */
+    public int getTableIndex(String name)
+    {
+        for (int i = 0;i < tables.size();i++)
+        {
+            if (tables.elementAt(i).equals(name)) return i;
+        }
+        return -1;
+    }
+
+        /**
+         * Sets the name of the class.
+         * Parsing should NOT begin until this function
+         * has been called.  Otherwise, there will be a
+         * nullpointer exception.
+         */
+    public void setClassName(String name)
+        throws Exception
+    {
+        name = name.trim();
+
+            // do basic checks to see if name is valid.
+        if (name.equals("") || name.endsWith(".") || name.startsWith("."))
+        {
+            addError("Invalid class name: " + name);
+        }
+        outputClass = new SJavaClass(name);
+    }
+
+        /**
+         * Adds a new error.
+         */
+    public void addError(String error) throws Exception
+    {
+        System.out.println("Error: " + error);
+    }
+:};
+
+init with {:
+    Table tables[] = new Table[]{
+                        new Table("mangle"),
+                        new Table("nat"),
+                        new Table("filter")
+                    } ;
+
+    for (int i = 0;i < 3;i++)
+    {
+        tables[i].addChain("PREROUTING");
+        tables[i].addChain("POSTROUTING");
+        tables[i].addChain("OUTPUT");
+        tables[i].addChain("INPUT");
+        tables[i].addChain("FORWARD");
+        addTable(tables[i]);
+    }
+:};
+
+terminal COLON, SEMI_COLON;
+terminal identifier, RULESET, TABLE, CHAIN, ERROR_TOKEN;
+terminal INT_TOKEN, CHAR_TOKEN, EQUALS;
+terminal LBRACE, RBRACE, LPAREN, RPAREN, IF, ELSE, GOTO;
+terminal LOG_NOT, PLUS, MINUS, MUL, DIV, MOD;
+terminal LOG_OR, LOG_AND, BIT_AND, BIT_OR, BIT_NOT, BIT_XOR, EQ, NEQ;
+terminal LT, GT, LE, GE, LSHIFT, RSHIFT, DOT;
+terminal ACCEPT, DROP, RETURN, SNAT, DNAT, LOG;
+terminal MODULE, STATE;
+
+non terminal relational_exp, unary_exp;
+non terminal module_option, state_option;
+non terminal ruleset, chain_decls, table_decls, chain_decl, table_decl;
+non terminal filters, if_statement;
+non terminal actions, statement, boolean_exp, valued_exp;
+non terminal return_statement, assign_statements, assign_statement;
+
+precedence left LOG_OR;
+precedence left LOG_AND;
+precedence left LOG_NOT;
+
+precedence left LSHIFT, RSHIFT;
+
+precedence left BIT_OR;
+precedence left BIT_XOR;
+precedence left BIT_AND;
+precedence left BIT_NOT; 
+
+precedence left PLUS, MINUS;
+precedence left MUL, DIV, MOD;
+
+/****************************************************************************/
+/*                          Beginning of Grammar                            */
+/****************************************************************************/
+
+ruleset ::= RULESET LBRACE table_decls RBRACE
+        {:
+            parser.generateCode();
+            RESULT = parser.outputClass;
+        :}
+        ;
+
+table_decls ::=
+        |   table_decl table_decls
+        ;
+
+table_decl ::= TABLE identifier:tName 
+                {:
+                    parser.currTable = parser.getTable((String)tName);
+
+                    if (parser.currTable == null)
+                    {
+                        parser.currTable = parser.addTable((String)tName);
+                    }
+
+                        // if null then ok..
+                    if (parser.currTable.chains != null)
+                    {
+                        addError("Table already exists: " + (String)tName);
+                    } else
+                    {
+                        parser.currTable.chains = new Vector();
+                    }
+                :}
+                LBRACE chain_decls RBRACE
+                ;
+
+chain_decls ::= |   chain_decl chain_decls ;
+
+chain_decl ::= CHAIN identifier:cn
+                {:
+                    String cName = (String)cn;
+                    parser.currChain = parser.currTable.getChain(cName);
+
+                        // then fine
+                    if (parser.currChain == null ||
+                        parser.currChain.exp == null)
+                    {
+                        parser.currChain = parser.currTable.addChain(cName);
+                    } else
+                    {
+                        addError("Chain already exists: " + cName);
+                    }
+                :}
+            LBRACE statement:stmt RBRACE
+            {:
+                    // add only if an expression doesnt already exist at
+                    // the given spot...
+                if (parser.currChain.exp == null)
+                {
+                    parser.currChain.exp = (Expression)stmt;
+                }
+            :}
+            ;
+
+statement ::=   {:      RESULT  = null;     :}
+            |   actions:a
+                {:      RESULT  =   a;      :}
+            |   filters:f
+                {:      RESULT  =   f;      :}
+            |   filters:f actions:a
+                {:
+                    ((Expression)f).next = (Expression)a;
+                    RESULT = f;
+                :}
+            ;
+
+filters ::= if_statement:stmt
+        {:
+            RESULT = stmt;
+        :}
+        |   if_statement:ifs ELSE   filters:f
+        {:
+            ((IfElseExpression)ifs).elseStmt = (Expression)f;
+            RESULT = ifs;
+        :}
+        |   if_statement:ifs ELSE   LBRACE statement:stmt RBRACE
+        {:
+            ((IfElseExpression)ifs).elseStmt = (Expression)stmt;
+        :}
+        ;
+
+if_statement ::= IF LPAREN  boolean_exp:bexp    RPAREN
+                        LBRACE statement:stmt RBRACE
+                    {:
+                        RESULT = new
+                        IfElseExpression((BooleanExpression)bexp,
+                                         (Expression)stmt);
+                    :}
+                ;
+
+actions ::= assign_statements return_statement ;
+
+assign_statements ::=   assign_statement:asgn SEMI_COLON
+                    {:
+                        RESULT = asgn;
+                    :}
+                    |   assign_statement:asgn SEMI_COLON assign_statements:asgns
+                    {:
+                        ((Expression)asgn).next = (Expression)asgns;
+                        RESULT = asgn;
+                    :}
+                    ;
+
+boolean_exp ::= 
+        |   relational_exp:exp
+            {:      RESULT = exp;    :}
+        |   boolean_exp:exp1            LOG_OR      boolean_exp:exp2
+            {:
+                RESULT = new
+                    BooleanExpression(BooleanExpression.OR,
+                                    exp1, (BooleanExpression)exp2);
+            :}
+        |   boolean_exp:exp1            LOG_AND     boolean_exp:exp2
+            {:
+                RESULT = new 
+                    BooleanExpression(BooleanExpression.AND,
+                                    exp1, (BooleanExpression)exp2);
+            :}
+        |   LPAREN     boolean_exp:bexp     RPAREN
+            {:      RESULT = bexp;          :}
+        |   LOG_NOT     boolean_exp:bexp
+            {:
+                RESULT = new UnaryExpression(UnaryExpression.NOT,
+                                             (ValuedExpression)bexp);
+            :}
+        ;
+
+relational_exp ::=
+      valued_exp:exp1           EQ              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.EQ,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           NEQ             valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.NE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           LT              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.LT,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           LE              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.LE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           GT              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.GT,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    | valued_exp:exp1           GE              valued_exp:exp2
+      {:
+        RESULT = new 
+            BooleanExpression(BooleanExpression.GE,
+                                exp1,(BooleanExpression)exp2);
+      :}
+    ;
+
+valued_exp ::=
+        identifier
+    |   INT_TOKEN
+    |   CHAR_TOKEN
+    |   MINUS                   unary_exp
+    |   identifier              DOT             identifier
+    |   LPAREN                 valued_exp      RPAREN
+    |                           BIT_NOT         valued_exp  
+    |   valued_exp              BIT_OR          valued_exp  
+    |   valued_exp              BIT_XOR         valued_exp  
+    |   valued_exp              BIT_AND         valued_exp  
+    |   valued_exp              LSHIFT          valued_exp  
+    |   valued_exp              RSHIFT          valued_exp  
+    |   valued_exp              PLUS            valued_exp  
+    |   valued_exp              MINUS           valued_exp  
+    |   valued_exp              MUL             valued_exp  
+    |   valued_exp              DIV             valued_exp  
+    |   valued_exp              MOD             valued_exp  
+    ;
+
+// snat and dnat are not implemented for the timebeing...
+// we will add it later...
+return_statement ::=
+            ACCEPT
+        |   ACCEPT state_option 
+        |   ACCEPT state_option module_option
+        |   RETURN 
+        |   DROP 
+        |   SNAT |   DNAT 
+        |   LOG
+        ;
+/**
+ * Tells what states of a connection we take.  The module_option can ONLY
+ * be used for ESTABLISHED and RELATED packets
+ */
+state_option ::= STATE EQUALS ;
+
+/**
+ * The module option is used for specifying which connection tracking
+ * module should be used.  This can only be invoked if the state option is
+ * used with established or established and related.  This is because after
+ * the IP level, we can have connections if we see packets both ways and so
+ * on. So we may want to track connections in both ways.  However, we may
+ * not want to do it two way, so we may not want to have a module take care
+ * of it and treat the packet as a one way thing.   So if the match option
+ * is invoked then the state_option MUST be called.  If the state option is
+ * invokved then  a default conn-track module will be invoked depending on
+ * the type of 'other' options
+ */
+module_option ::= MODULE EQUALS ;

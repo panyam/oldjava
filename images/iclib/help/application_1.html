@@ -1,0 +1,161 @@
+<html>
+<head><title>IconLibrary.com: Application Notes 1</title></head>
+<body bgcolor=#ffffff text=#000000 link=#0000FF vlink=#0000FF><center>
+
+<!-- ################# STYLE SHEETS  ################# -->
+
+<style type="text/css"><!--
+    .arial      { font-family: arial; font-size: 10pt; }
+    .arial2     { font-family: arial; font-size: 12pt; }    
+    .col        { font-size: 1pt; }
+    .menu       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+    .page       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #6BBDFF; }
+	.page:hover { text-decoration: underline; }    
+    .serif      { font-family: ms sans serif; font-size: 8pt; }
+    .serif2     { font-family: ms sans serif; font-size: 8pt; color: #000000; }    
+    .tab        { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+	.tab:hover  { text-decoration: underline; }
+--></style>
+
+<!-- ################# MAIN BODY ################# -->
+
+<table width=100% cellspacing=0 cellpadding=10 border=0>
+<tr><td valign=top class=arial><br>
+
+<!-- #### START OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+
+<!-- ################# PAGE HEADING ################# -->
+
+<a name="top">
+<font face="verdana, arial" size=4><b>Icon Library Application Notes 1</b></font>
+
+<!-- ################# NAVIGATION ################# -->
+
+<hr width=100% noshade size=1 color=blue>
+
+<b>Section Contents</b>
+<ul>
+<b><li><a href="../UserManual.html">Table of Contents</a></b> <font class=serif>
+<br></font>
+<br>
+<b><li><a href="application_1.html#desktop">Changing Desktop Icons</a></b> <font class=serif>
+Drives, Folders, Files, Shortcuts, System<br>
+How to change various icons on your desktop.</font>
+<br><br>
+<b><li><a href="application_2.html#colors">Using More Than 16 Colors</a></b> <font class=serif>
+256 colors, 64K Colors, 16M Colors<br>
+Allow desktop to display icons with 256 or more colors</font>
+<br><br>
+<b><li><a href="application_3.html#active">Managing an Active Collection</a></b> <font class=serif>
+<br>
+How to manage icons you commonly use on your system.</font>
+<br><br>
+<b><li><a href="application_4.html#derive">Deriving Your Own Icons</a></b> <font class=serif>
+<br>
+Create your own icons using Icon Library as your starting point.</font>
+<br><br>
+<b><li><a href="application_5.html#bmp">Icons as Bitmaps</a></b> <font class=serif>
+Web Pages, ClipArt, Photoshop, GIF, JPG<br>
+Save icons as bitmap images and use them in web pages and other art.</font>
+<br><br>
+</ul>
+<hr width=100% align=left noshade size=1 color=blue>
+
+<!-- ################# BODY OF TEXT ################# -->
+
+<div align=justify>
+<a name="desktop"><b>Changing Desktop Icons</b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#top">Top</a><br>
+
+<p>
+<a href="application_1.html#desktop">Drives</a>&nbsp;&nbsp;
+<a href="application_1a.html#desktop">Folders</a>&nbsp;&nbsp;
+<a href="application_1b.html#desktop">Files</a>&nbsp;&nbsp;
+<a href="application_1c.html#desktop">Shortcuts</a>&nbsp;&nbsp;
+<a href="application_1d.html#desktop">System</a><br>
+</p>
+
+<p><a name="drives"><b>Drives</b></a>
+<ol>
+	<li>It is possible to change the icon for the hard disk drives on a
+	Windows 95 and Windows 98 system by creating a file called
+	<b>c:\autorun.inf</b> and putting the following two lines into this
+	file.
+	<pre>
+[AUTORUN]
+ICON=c:\ICONS\SAMPLE_ICON.ICO</pre>
+	<li>You should create a folder called <b>C:\ICONS</b> to store the
+	icon you will use. I have assumed in this example that the icon has
+	been called <b>SAMPLE_ICON.ICO</b>
+	<li>I have not managed to make this work under Windows 2000 or
+	Windows ME. I have not yet tried to make it work under Windows XP.
+</ol>
+Another method...
+<ol>
+	<li>There is an alternate method which does work with Win98/2K/ME
+	but not with XP. You will need to edit your Windows Registry with
+	this method. <b>Always back up your registry before making any changes
+	to it.</b>
+	<li>In the registry, you can apply different icons to seperate floppy
+	drives, CDROM drives and hard drives with some simple registry keys
+	(Win 98 or above is needed). To do so create/edit this registry key...
+	<pre>
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\
+CurrentVersion\explorer\DriveIcons</pre>
+	<li>Under this key, create/edit news keys with only the drive letter
+	as their name. For example...
+	<pre>
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\
+CurrentVersion\explorer\DriveIcons\C</pre>
+	<li>Under each drive letter key, create another key called "DefaultIcon".
+	<pre>
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\
+CurrentVersion\explorer\DriveIcons\C\DefaultIcon</pre>
+	<img src="../images/application_1.gif" border=1 alt="Registry Editor">
+	<br><br>
+	<li>Decide which icon you want to use. For this example I chose the third
+	icon in the 256 color collection that comes with the shareware version of
+	Icon Library.
+	<br><br>
+	<img src="../images/application_2.gif" border=1 alt="Icon Library Display">
+	<br><br>
+	<li>Double click on the word <b>Default</b> in the right part of the
+	window and change the string <b>(value not set)</b> to point to the full
+	path of your icon. Add a comma and number when the icon is in an .icl file.
+	The first icon is 0.
+	<br><br>
+	<img src="../images/application_3.gif" border=1 alt="Edit Registry String">
+	<br><br>
+	<li>Click the <b>OK</b> button and you should now see the path set as
+	the default value for the drive.
+	<br><br>
+	<img src="../images/application_4.gif" border=1 alt="New Registry String">
+	<br><br>
+	Note that if there's an <b>autorun.inf</b> present in the root path of the
+	drive, any icon specified there may be displayed instead.
+	<li>You will have to reboot Windows for the new icon to be visible. Once
+	you have rebooted, you should see the new disk drive icon as shown for the
+	<b>HD_2</b> drive in this example.
+	<br><br>
+	<img src="../images/application_5.gif" border=1 alt="New Drive Icon">
+	<br><br>
+	<li>DefaultIcon settings do not seem to work with Windows XP.
+	<li>Floppy disks, ZIP disks and other removable media can also have their own
+	icons added using this method.
+	<li><b>DISCLAIMER:</b> I am not responsible for any system crash you have
+	after you edit your registry. <b>BACK IT UP FIRST</b>.
+	<li>You can now try changing the icons for some of your
+	<a href="application_1a.html#desktop">Folders</a>.
+
+</ol>
+</p>
+</div>
+
+<!-- #### END OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+<hr width=100% noshade size=1 color=blue>
+</td></tr>
+
+</table></center>
+</body></html>

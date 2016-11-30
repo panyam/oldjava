@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>Use Case Specification: Prepare Itinerary</TITLE>
+</HEAD>
+<BODY LINK="#0000ff">
+
+<font face="Courier New,Courier">
+<h1>Travel System Re-engineering</h1>
+<h2>Use Case Specification: Prepare Itinerary</h2>
+
+<P>&nbsp;</P>
+<h3>Brief Description</h3>
+
+<P>The Prepare Itinerary use case will allow the customer or travel agent to search
+for and reserve a seat(s) for a round trip or one way flight. </P>
+
+<P>&nbsp;</P>
+<h3>Flow of Events</h3>
+
+<h4>Basic Flow </h4>
+<P>Customer enters departure city, departure time, departure date, destination city,
+return time, return date, and selects round-trip or one-way.</P>
+<P>System responds with a list of departure flights and return flights.</P>
+<P>Customer selects the departure flight and return flight.</P>
+<P>System responds with the selected flight priced and alternative flights if less
+than selected and within one hour of departure and return times.</P>
+<P>Customer selects flights.</P>
+<P>System responds with seat availability for selected flights</P>
+<P>Customer selects seats</P>
+<P>System prices the itinerary and returns the itinerary confirmation window with
+selected flights </P>
+<P>Customer confirms the itinerary</P>
+<P>System sends the priced itinerary to Pay for Itinerary Use Case</P>
+
+<h4>Alternative Flows</h4>
+
+<h5>Customer not logged in</h5>
+<p>Before the customer can confirm the flights and save
+the itinerary, they must log in with their user id and password.  The Log In use
+case is executed and the system returns the itinerary confirmation window with
+selected flights. </P>
+<P>Customer confirms the itinerary</P>
+<P>System sends the priced itinerary to Pay for Itinerary Use Case</P>
+
+<h5>Customer not a member</h5>
+<P>In order to confirm an itinerary, the customer must be
+a member, so the Create Profile use case is executed and the system returns the
+itinerary confirmation window with selected flights.</P>
+<P>Customer confirms the itinerary</P>
+<P>System sends the priced itinerary to Pay for Itinerary Use Case</P>
+
+<P>&nbsp;</P>
+<h3>Special Requirements</h3>
+
+<h4>Security</h4>
+<P>All interaction with the customer and the system must be secured with SSL.</P>
+
+<P>&nbsp;</P>
+<h3>Pre-Conditions</h3>
+<h4>Customer Logged In</h4>
+<P>Customer has successfully logged in with a valid user id and password.</P>
+
+<h4>Customer has profile</h4>
+<P>Customer has an existing profile.</P>
+
+<P>&nbsp;</P>
+<h3>Post-Conditions</h3>
+<h4>Prepared Itinerary</h4>
+<P>An unpaid customer itinerary that contains the city,
+flight number, date, time, and seat number for a departure flight; and city,
+flight number, date, time and seat number for return flight.  It could also contain
+city, flight number, date, time and seat number for each leg of the flight if a
+lay over is necessary.</P>
+
+<P>&nbsp;</P>
+<h3>Uses Points</h3>
+<h4>Pay for Itinerary</h4>
+<P>After the customer has selected flights, seats and
+confirmed the itinerary, the pay for itinerary use case is executed</P>
+</FONT></font></BODY>
+</HTML>

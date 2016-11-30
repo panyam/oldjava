@@ -1,0 +1,230 @@
+<html>
+<head><title>IconLibrary.com: User Manual 4</title></head>
+<body bgcolor=#ffffff text=#000000 link=#0000FF vlink=#0000FF><center>
+
+<!-- ################# STYLE SHEETS  ################# -->
+
+<style type="text/css"><!--
+    .arial      { font-family: arial; font-size: 10pt; }
+    .arial2     { font-family: arial; font-size: 12pt; }    
+    .col        { font-size: 1pt; }
+    .menu       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+    .page       { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #6BBDFF; }
+	.page:hover { text-decoration: underline; }    
+    .serif      { font-family: ms sans serif; font-size: 8pt; }
+    .serif2     { font-family: ms sans serif; font-size: 8pt; color: #000000; }    
+    .tab        { font-family: verdana, arial; font-size: 10pt; font-weight: bold; text-decoration: none; color: #FFFFFF; }
+	.tab:hover  { text-decoration: underline; }
+--></style>
+
+<!-- ################# MAIN BODY ################# -->
+
+<table width=100% cellspacing=0 cellpadding=10 border=0>
+<tr><td valign=top class=arial><br>
+
+<!-- #### START OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+<!-- ################# PAGE HEADING ################# -->
+
+<a name="top">
+<font face="verdana, arial" size=4><b>Icon Library User Manual 4</b></font>
+
+<!-- ################# NAVIGATION ################# -->
+
+<hr width=100% noshade size=1 color=blue>
+
+<b>Section Contents</b>
+<ul>
+<b><li><a href="../UserManual.html">Table of Contents</a></b> <font class=serif>
+<br></font>
+<br>
+<b><li><a href="manual_1.html#starting">Starting Icon Library</a></b> <font class=serif>
+Shortcut, ICL file, Shareware Popup<br>
+Methods of starting Icon Library and reason for shareware popup.</font>
+<br><br>
+<b><li><a href="manual_2.html#options">Options Menu</a></b> <font class=serif>
+Loading Menus, Selecting Colors, Icon Menus<br>
+Registered/Shareware Menus, Background and BMP Transparency Colors. </font>
+<br><br>
+<b><li><a href="manual_3.html#icons">Icon Menus</a></b> <font class=serif>
+Displaying Icons, Extracting Icons, ICO, BMP, Shareware Topics.<br>
+Click on icons in display to extract and save the selected icon.</font>
+<br><br>
+<b><li><a href="manual_4.html#ini">Customise Your Menus</a></b> <font class=serif>
+Your Own Icons, Icolib.INI, Third Party Utilities<br>
+Add your own ICL files to the library, INI file format, useful icon programs.</font>
+<br><br>
+<b><li><a href="manual_5.html#help">More Help</a></b> <font class=serif>
+About Box, Web Page, Contact Details, Samples<br>
+What is in the About Box and the Icon Library web page, where to send email.</font>
+<br><br>
+</ul>
+<hr width=100% align=left noshade size=1 color=blue>
+
+<!-- ################# BODY OF TEXT ################# -->
+
+<div align=justify>
+<a name="ini"><b>Customise Your Menus</b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#top">Top</a><br>
+<ol>
+	<li>The menus used for selecting the various icon categories for
+	display are controlled by a configuration file called <b>icolib.ini</b>.
+	This file controls the layout of the menus, the descriptions for each
+	menu item, and the location of the associated <b>ICL</b> file for each
+	menu. This file also stores the size of the Icon Library window and its
+	position on the screen last time it was used. Future parameters
+	may also be stored in the <b>icolib.ini</b> file in later releases of
+	the software. In order to keep Icon Library self-contained there are
+	no parameters stored in the Windows Registry, with the exception
+	of providing an optional file type association of <b>ICL</b> files with
+	Icon Library so that double clicking on <b>ICL</b> files will start
+	Icon Library.
+	<li>Why would a user have a need to customise the Icon Library menus?
+	Some possible reasons might be to...
+	<ul>
+		<li>Add new libraries of icons to the collection. Note that
+		changing, adding or deleting icons in existing <b>ICL</b>
+		files does not require any changes to the <b>icolib.ini</b> file.
+		<li>Remove categories no longer required.
+		<li>Re-arrange the menus so that more frequently used items are
+		near the top of the selections, or perhaps to make the menus
+		more intuitive for a particular user.
+		<li>Change the descriptions on the menus.
+		<li>Translate the menu descriptions to a foreign language.
+		<li>Specify a new filename or pathname for <b>ICL</b> files.
+	</ul>
+	<li>When you make changes to the <b>icolib.ini</b> file, you can see
+	these changes immediately, without having to restart the Icon Library
+	viewer by selecting the <b>Registered</b> or <b>New</b>
+	<a href="manual_2.html#options">Menu</a> option.
+	<li>The format of the <b>icolib.ini</b> is fairly straight forward
+	once you understand its basic structure. Each of the items in the main
+	menu bar of Icon Library are positioned and described by two lines in
+	this file. For example, the <b>Things</b> menu heading has this entry
+	in the <b>icolib.ini</b> file...
+	<br><br>
+	<img src="../images/manual_15.gif" border=1 alt="Menu Example">
+	<br><br>
+
+	<b><font color="green">
+	[Menu_3]<br>
+	Name=&Things<br>
+	</font></b><br>
+
+	<li>The characters <b>Menu_</b> are required by Icon Library and
+	cannot be changed.  The numbers following these characters (<b>3</b>
+	in this case) are sequential, starting at 1. Note that is you skip a
+	number, all following menu items will not be displayed. Keep the
+	numbers sequential! Finally, the line must be enclosed in square
+	brackets. The <b>Name=</b> parameter specifies what will be displayed
+	for that menu item, in this case <b>&Things</b>. The <b>&</b> is used
+	for keyboard navigation between menu items. Try this experiment. Open
+	Icon Library and press the <b>Alt</b> key on your keboard. You should
+	see a letter on each menu item underlined. For example, pressing
+	<b>Alt-T</b> will select the <b>Things</b> menu. The character
+	following the <b>&</b> is the hot-key, and it does not have to be the
+	first character. <b>Th&ings</b> is the way to make the letter <b>i</b>
+	the hot key. Each main menu group is started with two similar lines in
+	the <b>icolib.ini</b> file.
+
+	<li>After these two lines, there follow a set of descriptors for the
+	drop-down menu group. The first menu item under the <b>&Things</b>
+	menu is <b>Brigdes and Towers...</b> which is described with this
+	line in <b>icolib.ini</b>
+	<br><br>
+	<img src="../images/manual_16.gif" border=1 alt="Menu Group Example">
+	<br><br>
+
+	<b><font color="green">
+	Item_1=things\bridges_towers.icl,Bridges and Towers...<br>
+	</font></b><br>
+
+	<li>This parameter has 3 main parts, a descriptor <b>Item_1</b>
+	followed by an <b>equals</b> sign, the pathname to the <b>ICL</b>
+	file followed by a <b>comma</b>, and finally, the text that is
+	displayed to the user for that menu item.
+	<li>The pathname can be either relative or absolute. For example,
+	these addresses will point to the same <b>ICL</b> file on my
+	system.
+	<ul>
+		<li><b>things\bridges_towers.icl</b>
+		<li><b>c:\icolib5_shar\things\bridges_towers.icl</b>
+	</ul>
+	Here are some more examples of the types of pathnames you can use.
+	<ul>
+		<li><b>Item_1=icons\rabbit.icl,This is a rabbit...</b><br>
+		This is a relative path based on the location of the
+		icolib.exe program.
+		<li><b>Item_2=..\icondir\rabbit.icl,This is a rabbit...</b><br>
+		This is a more complex relative pathname.
+		<li><b>Item_3=d:\tmp\rabbit.icl,This is a rabbit...</b><br>
+		This is a direct pathname and includes a disk drive specifier.
+		<li><b>Item_4=\top_dir\icons\rabbit.icl,This is a rabbit...</b><br>
+		This is a direct pathname on the current disk drive
+		<li><b>Item_5=c:\windows\notepad.exe,Windows Notepad...</b><br>
+		This is a direct pathname pointing to the Windows Notepad file
+		which contains a few icons. Note that Windows EXE and
+		DLL files which contain icons can be directly referenced in
+		the ICOLIB.INI file although there is a technical problem which
+		prevents you from extracting ICO files from EXE or DLL files.
+	</ul>
+	<li>Some menu items point to a sub-menu like this.
+	<br><br>
+	<img src="../images/manual_17.gif" border=1 alt="Sub Menu Example">
+	<br><br>
+		
+	<b><font color="green">
+	Item_1=Faces<br>
+	Item_1_1=human\faces\eyes_ears.icl,Eyes and Ears...<br>
+	</font></b><br>
+
+	<li>The first line only contains a descriptor <b>Item_1</b> and the
+	text to be displayed to the user. Because there is no pathname,
+	the Icon Library program knows that this is just a pointer to the
+	real menu item. The actual <b>Eyes and Ears...</b> menu is then
+	described in the second line. The format is the same as described
+	in the previous section, except that there is now an extra counter
+	contained in the descriptor <b>Item_1_1</b>
+
+	<li>Here is an example of a complete menu group and the parameters
+	used in <b>icolib.ini</b> to create this menu structure.
+	<br><br>
+	<img src="../images/manual_18.gif" border=1 alt="Sub Menu Example">
+	<br><br>
+		
+	<b><font color="green">
+	[Menu_6]<br>
+	Name=&Communications<br>
+	Item_1=Data<br>
+	Item_1_1=comms\data\lan.icl,Local Area Network...<br>
+	Item_1_2=comms\data\wan.icl,Wide Area Network...<br>
+	Item_1_3=comms\data\modems.icl,Modems...<br>
+	Item_1_4=comms\data\other.icl,Assorted...<br>
+	Item_2=comms\ham_radio.icl,Ham Radio...<br>
+	Item_3=comms\isp.icl,Service Providers...<br>
+	Item_4=comms\fax.icl,FAX...<br>
+	Item_5=comms\phone.icl,Telephone...<br>
+	</font></b><br>
+
+	<li>Icon Library does not have the ability to <b>Create Icons</b>
+	or to group icons into <b>Libraries</b>. You will need some other
+	software to achieve these tasks. I strongly recommend a product
+	called <b>MicroAngelo</b> from
+	<a href="http://impactsoft.com" target="impact">ImpactSoft</a>.
+	This program can create new icons or edit existing ones. It can
+	handle icons of any size with 16 or 256 colors. MicroAngelo also
+	has a <b>Librarian</b> function which lets you group icons together
+	into <b>ICL</b> files. It also has many other features desirable to
+	an Icon Enthusiast. I highly recommend this program! Please note
+	that I am in no way affiliated with Impact Software other than as a
+	happy user.
+</ol>
+</div>
+
+<!-- #### END OF COMMON CODE DISTRIBUTED WITH ICONLIBRARY #### -->
+
+<hr width=100% align=left noshade size=1 color=blue>
+</td></tr>
+
+</table></center>
+</body></html>

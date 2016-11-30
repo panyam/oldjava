@@ -1,0 +1,62 @@
+<HTML>
+<HEAD>
+<TITLE>Use Case Specification: Change Itinerary</TITLE>
+</HEAD>
+<BODY LINK="#0000ff">
+
+<font face="Courier New,Courier">
+<h1>Travel System Re-engineering</h1>
+<h2>Use Case Specification: Change Itinerary</h2>
+
+<p>&nbsp;</P>
+<h3>Brief Description</h3>
+<P>The Change Itinerary use case will allow the customer or travel agent to search
+for an itinerary and change flight. </P>
+
+<p>&nbsp;</P>
+<h3>Flow of Events</h3>
+<h4>Basic Flow</h4>
+<P>Customer selects change itinerary from menu</P>
+<P>System presents a list of itineraries</P>
+<P>Customer selects the itinerary to change</P>
+<P>System returns the selected itinerary, which includes each segment of the itinerary.</P>
+<P>Customer selects the segment to change.  In order to change, the segment is
+deleted and the Prepare Itinerary Use Case is executed.</P>
+
+<h4>Alternative Flows</h4>
+<p>none</p>
+
+<p>&nbsp;</P>
+<h3>Special Requirements</h3>
+
+<h4>Security</h4>
+
+<P>All interactions with the customer and the system must be secured with SSL.</P>
+
+<p>&nbsp;</P>
+<h3>Pre-Conditions</h3>
+
+<h4>Customer Logged In</h4>
+<P>Customer has successfully logged in with a valid user id and password.</P>
+
+<h4>Customer has profile</h4>
+<P>Customer has an existing profile.</P>
+
+<p>&nbsp;</P>
+<h3>Post-Conditions</h3>
+
+<h4>Prepared Itinerary</h4>
+<P>A unpaid customer itinerary that contains the city, flight number, date, time,
+and seat number for a departure flight; and city, flight number, date, time and
+seat number for return flight.  It could also contain city, flight number, date,
+time and seat number for each leg of the flight if a lay over is necessary.</P>
+
+<p>&nbsp;</P>
+<h3>Uses Points</h3>
+
+<h4>Pay for Itinerary</h4>
+<P>After the customer has selected flights, seats and confirmed the itinerary, the
+pay for itinerary use case is executed</P>
+
+</FONT></BODY>
+</HTML>

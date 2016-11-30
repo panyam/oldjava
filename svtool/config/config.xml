@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svtool>
+
+  <icons>
+    <icon name = "QueryViewIcon" uri = "images/icons/queryViewIcon.gif"/>
+    <icon name = "NetDiscoveryViewIcon" uri = "images/icons/netDiscIcon.gif"/>
+    <icon name = "ServiceViewIcon" uri = "images/icons/serviceViewIcon.gif"/>
+    <icon name = "TestViewAIcon" uri = "images/icons/testViewA.gif"/>
+    <icon name = "TestViewBIcon" uri = "images/icons/testViewB.gif"/>
+    <icon name = "TestViewCIcon" uri = "images/icons/testViewC.gif"/>
+    <icon name = "TestViewDIcon" uri = "images/icons/testViewD.gif"/>
+    <icon name = "TestViewEIcon" uri = "images/icons/testViewE.gif"/>
+  </icons>
+
+    <!--
+        Set of view/GUI classes that can be attached to a Database Session
+    -->
+  <dbviews>
+    <dbview name = "Query"
+            menu_name = "Query View"
+            icon = "QueryViewIcon"
+            class = "svtool.gui.views.QueryView"/>
+
+    <dbview name = "Network Discovery"
+            menu_name = "Network Discovery View"
+            icon = "NetDiscoveryViewIcon"
+            class = "svtool.gui.views.NetworkDiscoveryView"/>
+
+    <dbview name = "Service Data"
+            menu_name = "Service Data View"
+            icon = "ServiceViewIcon"
+            class = "svtool.gui.views.ServiceView"/>
+
+    <dbview name = "Test View A"
+            menu_name = "Test View A"
+            icon = "TestViewAIcon"
+            class = "svtool.gui.views.TestViewA"/>
+
+    <dbview name = "Test View B"
+            menu_name = "Test View B"
+            icon = "TestViewBIcon"
+            class = "svtool.gui.views.TestViewB"/>
+
+    <dbview name = "Test View C"
+            menu_name = "Test View C"
+            icon = "TestViewCIcon"
+            class = "svtool.gui.views.TestViewC"/>
+
+    <dbview name = "Test View D"
+            menu_name = "Test View D"
+            icon = "TestViewDIcon"
+            class = "svtool.gui.views.TestViewD"/>
+
+    <dbview name = "Test View E"
+            menu_name = "Test View E"
+            icon = "TestViewEIcon"
+            class = "svtool.gui.views.TestViewE"/>
+  </dbviews>
+
+    <!-- Set of looks and feels -->
+  <laf_list>
+    <laf name = "Windows"
+       class = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"/>
+    <laf name = "MacOS"
+       class = "com.sun.java.swing.plaf.macos.MacOSLookAndFeel"
+       jar = "ext/macos.jar"/>
+    <laf name = "Napkin" jar = "ext/napkinlaf.jar"
+         class = "napkin.NapkinLookAndFeel"/>
+    <laf name = "Kunstsoff" jar = "ext/kunstsoff.jar"
+       class = "com.incors.plaf.kunststoff.KunststoffLookAndFeel"/>
+    <laf name = "Motif"
+       class = "com.sun.java.swing.plaf.motif.MotifLookAndFeel"/>
+    <laf name = "GTK"
+       class = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"/>
+    <laf name = "Metal"
+       class = "javax.swing.plaf.metal.MetalLookAndFeel"/>
+    <laf name = "Simple" jar = "ext/slaf.jar"
+       class = "com.memoire.slaf.SlafLookAndFeel"/>
+    <laf name = "Metouia" jar = "ext/metouia.jar"
+       class = "net.sourceforge.mlf.metouia.MetouiaLookAndFeel"/>
+    <laf name = "Skin" jar = "ext/skinlf.jar"
+       class = "com.l2fprod.gui.plaf.skin.SkinLookAndFeel"/>
+    <laf name = "3D" jar = "ext/3DLF.jar"
+        class = "swing.addon.plaf.threeD.ThreeDLookAndFeel"/>
+  </laf_list>
+
+  <connections>
+    <connection password="csomadminpwd" sid="csom" userid="csom_admin"/>
+    <connection password="csomadminpwd" sid="csomuat" userid="csom_admin"/>
+    <connection password="cleandata" sid="csom" userid="c920884"/>
+    <connection password="c920884" sid="dev9" userid="c920884"/>
+    <connection password="manager" sid="orch" userid="system"/>
+    <connection password="csomadminpwd" sid="csom_staging" userid="csom_admin"/>
+    <connection password="password" sid="server_name" userid="userid"/>
+  </connections>
+  <querytable/>
+</svtool>

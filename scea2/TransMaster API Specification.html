@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>TransMaster API Specification</TITLE>
+</HEAD>
+<BODY>
+
+<font face="Courier New,Courier">
+<h1>TransMaster API Specification</h1>
+
+<FONT SIZE=-1>
+<P>TransMaster handles the processing of credit card transactions for FlyByNight,
+Inc.  Their current product relies on a dedicated phone line and sockets to
+communicate the credit card transaction.  They too are getting web enabled and
+with the next release of their software product, they will have an interface that
+will use XML-RPC over HTTPS.  This will allow customers to eliminate the cost of
+a dedicated line by using the Internet to communicate.  The next release is already
+in beta, so it is sufficient to say that the new Travel system can design for the
+new release.</P>
+
+<P>XML-RPC is a Remote Procedure Calling protocol that works over the Internet.
+An XML-RPC message is an HTTP-POST request. The body of the request is in XML. A
+procedure executes on the server and the value it returns is also formatted in XML.
+Procedure parameters can be scalars, numbers, strings, dates, etc.; and can also
+be complex record and list structures.</P>
+
+<P>Here is an example XML-RPC request:</P>
+<br>&lt;?xml version="1.0"?&gt;
+<br>&lt;methodCall&gt;
+<br>&lt;methodName&gt;someMethod&lt;/methodName&gt;
+<br>&lt;params&gt;
+<br>&lt;param&gt;
+<br>&lt;value&gt;&lt;string&gt;someValue&lt;/string&gt;&lt;/value&gt;
+<br>&lt;/param&gt;
+<br>&lt;/params&gt;
+<br>&lt;/methodCall&gt;
+</FONT>
+
+<h2>Request format</h2>
+<font size=-1>
+<P>The request is in XML, a single &lt;methodCall&gt; structure. The &lt;methodCall&gt;
+must contain a &lt;methodName&gt; sub-item, a string, containing the name of the
+method to be called. The string may only contain identifier characters, upper and
+lower-case A-Z, the numeric characters, 0-9, underscore, dot, colon and slash. It's
+entirely up to the server to decide how to interpret the characters in a methodName.
+For example, the methodName could be the name of a file containing a script that
+executes on an incoming request. It could be the name of a cell in a database table.
+Or it could be a path to a file contained within a hierarchy of folders and files.
+If the procedure call has parameters, the &lt;methodCall&gt; must contain a &lt;params&gt;
+sub-item. The &lt;params&gt; sub-item can contain any number of &lt;param&gt;s,
+each of which has a &lt;value&gt;. </P>
+</font>
+
+<h3>Scalar &lt;value&gt;s</h3>
+<font size=-1>
+<P>&lt;value&gt;s can be scalars, type is indicated by nesting the value inside
+one of the tags listed in this table:</P>
+<TABLE BORDER CELLSPACING=1 BORDERCOLOR="#000000" WIDTH=576>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<B><I><P ALIGN="CENTER">Tag</B></I></TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<B><I><P ALIGN="CENTER">Type</B></I></TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<B><I><P ALIGN="CENTER">Example</B></I></TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;i4&gt; or &lt;int&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>Four byte signed integer</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>12  or -12</TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;boolean&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>0 (false) or 1 (true)</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>1</TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;string&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>ASCII string</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>Hello World</TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;double&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>Double-precision signed floating point number</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>12.214 or -54.12</TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;dateTime.iso8601&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>Date/Time</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>19991025T14:43:10</TD>
+</TR>
+<TR><TD WIDTH="33%" VALIGN="TOP">
+<P>&lt;base64&gt;</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<P>Base64-encoded binary</TD>
+<TD WIDTH="33%" VALIGN="TOP">
+<FONT SIZE=2><P>W91IGNhbid0IHJlYWQgdGhpcyE=</FONT></TD>
+</TR>
+</TABLE>
+
+<P>If no type is indicated, the type is string.</P>
+</font>
+
+<h3>&lt;struct&gt;s</h3>
+<font size=-1>
+<P>A value can also be of type &lt;struct&gt;.</P>
+
+<P>A &lt;struct&gt; contains &lt;member&gt;s and each &lt;member&gt; contains a
+&lt;name&gt; and a &lt;value&gt;. </P>
+
+<P>Here's an example of a two-element &lt;struct&gt;:
+<br>&lt;struct&gt;
+<br>   &lt;member&gt;
+<br>      &lt;name&gt;lowerBound&lt;/name&gt;
+<br>      &lt;value&gt;&lt;i4&gt;18&lt;/i4&gt;&lt;/value&gt;
+<br>   &lt;/member&gt;
+<br>   &lt;member&gt;
+<br>      &lt;name&gt;upperBound&lt;/name&gt;
+<br>      &lt;value&gt;&lt;i4&gt;139&lt;/i4&gt;&lt;/value&gt;
+<br>   &lt;/member&gt;
+<br>&lt;/struct&gt;
+<P>&lt;struct&gt;s can be recursive, any &lt;value&gt; may contain a &lt;struct&gt;
+or any other type, including an &lt;array&gt;, described below.</P>
+</font>
+
+<h3>&lt;array&gt;s</h3>
+<font size=-1>
+<P>A value can also be of type &lt;array&gt;. An &lt;array&gt; contains a single
+&lt;data&gt; element, which can contain any number of &lt;value&gt;s.</P>
+<P>Here's an example of a four-element array:
+<br>&lt;array&gt;
+<br>&lt;data&gt;
+<br>&lt;value&gt;&lt;i4&gt;12&lt;/i4&gt;&lt;/value&gt;
+<br>&lt;value&gt;&lt;string&gt;Egypt&lt;/string&gt;&lt;/value&gt;
+<br>&lt;value&gt;&lt;boolean&gt;0&lt;/boolean&gt;&lt;/value&gt;
+<br>&lt;value&gt;&lt;i4&gt;-31&lt;/i4&gt;&lt;/value&gt;
+<br>&lt;/data&gt;
+<br>&lt;/array&gt;
+</p>
+
+<p>&lt;array&gt; elements do not have names. You can mix types as the example above
+illustrates. &lt;arrays&gt;s can be recursive, any value may contain an &lt;array&gt;
+ or any other type, including a &lt;struct&gt;, described above.</P>
+
+<P><strong>Here is the XML-RPC request to authorize a credit card transaction:</strong>
+<br>&lt;?xml version="1.0"?&gt;
+<br>&lt;methodCall&gt;
+<br>   &lt;methodName&gt;AuthorizeTransaction&lt;/methodName&gt;
+<br>      &lt;params&gt;
+<br>         &lt;param&gt;
+<br>            &lt;struct&gt;
+<br>              &lt;member&gt;
+<br>                &lt;name&gt;MerchantID&lt;/name&gt;
+<br>                &lt;value&gt;&lt;string&gt;1234&lt;/string&gt;&lt;/value&gt;
+<br>              &lt;/member&gt;
+<br>              &lt;member&gt;
+<br>                &lt;name&gt;TransactionIdentifier&lt;/name&gt;
+<br>                &lt;value&gt;&lt;int&gt;101&lt;/int&gt;&lt;/value&gt;
+<br>              &lt;/member&gt;
+<br>              &lt;member&gt;
+<br>                &lt;name&gt;CreditCardNumber&lt;/name&gt;
+<br>                &lt;value&gt;&lt;base64&gt;JfdK3s3392LL&lt;/base64&gt;&lt;/value&gt;
+<br>              &lt;/member&gt;
+<br>              &lt;member&gt;
+<br>                &lt;name&gt;PurchaseAmount&lt;/name&gt;
+<br>                &lt;value&gt;&lt;double&gt;52.34&lt;/double&gt;&lt;/value&gt; // Amount
+<br>              &lt;/member&gt;
+<br>           &lt;/struct&gt;
+<br>       &lt;/param&gt;
+<br>   &lt;/params&gt;
+<br>&lt;/methodCall&gt;
+</P>
+</font>
+
+<h2>Response example</h2>
+<font size=-1>
+<P>The response from TransMaster will not be using the XML-RPC response format,
+but instead, will be sending back an XML stream of the object(s) requested.  For
+example, the request is made for a credit card authorization using the XML-RPC in
+the above example request.  The response would look something like:</P>
+
+<p>&lt;transaction&gt;
+<br>  &lt;identifier&gt;101&lt;/identifier&gt;
+<br>  &lt;result&gt;authorized&lt;/result&gt;
+<br>&lt;/transaction&gt;
+</P>
+
+</FONT>
+<b><a name="update2">Copyright and disclaimer</a></b><p>
+
+&copy; Copyright 1998-99 UserLand Software. All Rights Reserved.<p>
+
+This document and translations of it may be copied and furnished to others, and derivative 
+works that comment on or otherwise explain it or assist in its implementation may be 
+prepared, copied, published and distributed, in whole or in part, without restriction of 
+any kind, provided that the above copyright notice and these paragraphs are included on 
+all such copies and derivative works.  <p>
+
+This document may not be modified in any way, such as by removing the copyright notice or 
+references to UserLand or other organizations. Further, while these copyright restrictions 
+apply to the written XML-RPC specification, no claim of ownership is made by UserLand to 
+the protocol it describes. Any party may, for commercial or non-commercial purposes, implement 
+this protocol without royalty or license fee to UserLand. The limited permissions granted 
+herein are perpetual and will not be revoked by UserLand or its successors or assigns.<p>
+
+This document and the information contained herein is provided on an "AS IS" basis and 
+USERLAND DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY 
+WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY 
+IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.<p>
+
+
+</BODY>
+</HTML>

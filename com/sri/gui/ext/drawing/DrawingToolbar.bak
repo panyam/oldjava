@@ -1,0 +1,485 @@
+package com.sri.gui.ext.drawing;
+
+import java.awt.*;
+import java.awt.event.*;
+import com.sri.gui.core.button.*;
+import com.sri.gui.core.containers.tabs.*;
+import com.sri.gui.ext.*;
+import com.sri.gui.ext.selectors.*;
+import com.sri.gui.ext.dialogs.*;
+import java.awt.image.*;
+
+    /**
+     * This is the drawing toolbar.
+     */
+public class DrawingToolbar extends Dialog implements MouseListener
+{
+    protected Panel contentPanel = new Panel(new BorderLayout());
+    protected SceneViewer scene = null;
+    protected ColorDialog cdialog = null;
+    protected DrawingPanel parent = null;
+    Label info = new Label("");
+    protected TabPanel items = new TabPanel(false);
+
+    protected SActionButton buttons[] = {
+        new SActionButton("Basic Shapes"),
+        new SActionButton("Transform"),
+        new SActionButton("Auto Shapes"),
+        new SActionButton("Network Shapes"),
+    };
+
+    protected Panel panels[] =
+    {
+        new BasicShapesPanel(),
+        new Panel(),
+        new Panel(),
+        new Panel(),
+    };
+
+    public DrawingToolbar(Frame f,String s,boolean b)
+    {
+        this(f,null,null);
+    }
+
+    public DrawingToolbar(Frame f,DrawingPanel parent,SceneViewer scene) {
+        super(f,"Drawing Toolbar",false);
+        this.scene = scene;
+        this.parent = parent;
+
+        cdialog = new ColorDialog(f,"Select Color...");
+
+        setBackground(Color.white.darker());
+        setLayout(new BorderLayout());
+        setResizable(true);
+
+        configureItems();
+        items.setLayout(new VerticalTabLayout(VerticalTabLayout.RIGHT));
+        for (int i = 0;i < panels.length;i++)
+        {
+            items.add(panels[i],buttons[i]);
+        }
+
+        contentPanel.add("Center",items);
+        contentPanel.add("South",info);
+        add("Center",contentPanel);
+
+        addComponentListener(new ComponentAdapter()
+        {
+            public void componentResized(ComponentEvent e)
+            {
+                System.out.println("Dimension = " + getSize());
+            }
+        });
+        setSize(210,285);
+        validate();
+    }
+
+        /**
+         * Sets the scene associated with this toolbar.
+         */
+    public void setScene(SceneViewer scene)
+    {
+        this.scene = scene;
+    }
+
+        /**
+         * Sets the drawing panel associated with this toolbar.
+         */
+    public void setDrawingPanel(DrawingPanel dp)
+    {
+        this.parent = dp;
+    }
+
+    public Panel getContentPanel()
+    {
+        return contentPanel;
+    }
+
+    public void mouseClicked(MouseEvent e) { }
+    public void mouseReleased(MouseEvent e) { }
+    public void mousePressed(MouseEvent e) { }
+    public void mouseEntered(MouseEvent e) {
+        Object src = e.getSource();
+        if (src instanceof SButton)
+        {
+            info.setText(((SButton)src).getText());
+        }
+    }
+    public void mouseExited(MouseEvent e) {
+        parent.setInformation("");
+        info.setText("");
+    }
+
+        /**
+         * Configures the buttons to be displayed.
+         */
+    private void configureItems()
+    {
+        int wh = 30;
+        Image im[] = new Image[buttons.length];
+        int ind[] = new int[wh*wh];
+        for (int i = 10;i < 20;i++)
+        {
+            ind[i * wh + i] = 0xff000000;
+        }
+        for (int i = 0;i < buttons.length;i++)
+        {
+            im[i] = createImage(DrawingResource.createMainIconImage(i));
+            buttons[i].setBackground(Color.lightGray);
+            buttons[i].showText(true);
+            buttons[i].setFont(new Font("Serif",Font.ITALIC + Font.BOLD, 12));
+            buttons[i].showFocus(false);
+            buttons[i].setRollOver(true);
+            buttons[i].showBorder(true);
+            buttons[i].setContentAllignment(SButton.CENTER);
+            buttons[i].setTextPosition(SButton.EAST);
+            buttons[i].addMouseListener(this);
+        }
+
+            // initially all images are transparent...
+        for (int i = 0;i < im.length;i++)
+        {
+            buttons[i].setMouseOutImage(im[i]);
+            buttons[i].setMousePressedImage(im[i]);
+            buttons[i].setMouseOverImage(im[i]);
+        }
+    }
+
+    /**
+     * Panel used to show basic shapes buttons.
+     */
+    class BasicShapesPanel extends Panel//SelectorPanel
+    {
+        int cR = 5;
+        int cC = 4;
+        ColorPallette pallette = new ColorPallette(cR,cC,2,2);
+        int nCols = 0;
+        Button moreColors = new Button("...");
+        Button transparent = new Button("None");
+
+        LineStyleSelector lineStyle = new LineStyleSelector(info);
+        LineWidthSelector lineWidth = new LineWidthSelector(info);
+        ArrowStyleSelector arrowStyle = new ArrowStyleSelector(info);
+        Panel currSouth = lineStyle;
+
+        public BasicShapesPanel()
+        {
+            this.setLayout(new BorderLayout());
+            Panel colorTop = new Panel(new BorderLayout());
+            this.add("Center",new BasicShapeButtons());
+            this.add("South",currSouth);
+            lineStyle.setVisible(true);
+            lineWidth.setVisible(true);
+            arrowStyle.setVisible(true);
+        }
+
+        class BasicShapeButtons extends SelectorPanel implements ItemListener
+        {
+            public final String basicShapeButtonNames[] =
+            {
+                "Normal Mouse", "Rotate Object", "Text",
+                "Lines", "Rectangles", "Circles",
+                "Line Color", "Fill Color", "Text Color",
+                "Line Style", "Line Width", "Arrow Style",
+            };
+
+            ColorDialog cd = new ColorDialog((Frame)DrawingToolbar.this.getParent(),"Colors...");
+            public BasicShapeButtons()
+            {
+                super();
+                numStyles = 12;
+                this.addMouseListener(this);
+                this.addMouseMotionListener(this);
+                this.addItemListener(this);
+            }
+
+            public void itemStateChanged(ItemEvent e)
+            {
+                if (e.getSource() == this)
+                {
+                    System.out.println("Curr Item: " + currItem);
+                    if (currItem < 3) return ;
+                    BasicShapesPanel.this.remove(currSouth);
+                    switch (currItem)
+                    {
+                    case 3:
+                        System.out.println("Setting pre add shape mode");
+                        scene.addElement(new Rect(), true);
+                    break;
+                    case 4:
+                        scene.addElement(new Rect(), true);
+                    break;
+                    case 5:
+                        scene.addElement(new Triangle(), true);
+                    break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        cdialog.setVisible(true);
+                    break;
+                    case 9: BasicShapesPanel.this.add("South",(currSouth = lineStyle)); this.validate(); return ;
+                    case 10: BasicShapesPanel.this.add("South",(currSouth = lineWidth));this.validate(); return ;
+                    case 11: BasicShapesPanel.this.add("South",(currSouth = arrowStyle));this.validate(); return ;
+                    default : BasicShapesPanel.this.add("South",currSouth);this.validate(); return ;
+                    }
+                }
+            }
+
+            public void generateEvent (int which)
+            {
+                processItemEvent(new ItemEvent(this,
+                                               ItemEvent.ITEM_STATE_CHANGED,
+                                               this,
+                                               ItemEvent.ITEM_STATE_CHANGED));
+            }
+
+            public int pointToIndex(int x,int y)
+            {
+                Dimension d = this.getSize();
+                if (x >= 0 && y >= 0 && x < d.width && y < d.height)
+                {
+                    return (3 * (y * 4 / d.height)) + (x * 3 / d.width);
+                }
+                return -1;
+            }
+
+            public void mouseExited(MouseEvent e)
+            {
+                super.mouseExited(e);
+                info.setText("");
+            }
+
+            public void mouseMoved(MouseEvent e)
+            {
+                super.mouseMoved(e);
+                info.setText(basicShapeButtonNames[currMovingItem]);
+            }
+
+            public void mouseDragged(MouseEvent e)
+            {
+                super.mouseDragged(e);
+                info.setText(basicShapeButtonNames[currPressedItem]);
+            }
+
+            protected void prepareBuffer(Dimension d)
+            {
+                super.prepareBuffer(d);
+                bg.setColor(Color.lightGray);
+                bg.fillRect(0,0,d.width,d.height);
+                int w = d.width / 3, rw = d.width % 3;
+                int h = d.height / 4, rh = d.width % 4;
+                int x;
+                int y;
+                int offX = (w - 20) / 2;
+                int offY = (h - 20) / 2;
+
+                for (int i = 0;i < 12;i++)
+                {
+                    x = (i % 3) * w;
+                    y = (i / 3) * h;
+                    bg.setColor(Color.lightGray);
+                    if (i == currItem) bg.fill3DRect(x++,y++,w,h,false);
+                    else if (i == currMovingItem) bg.draw3DRect(x,y,w,h,true);
+                    else if (i == currPressedItem) bg.draw3DRect(x++,y++,w,h,false);
+                    drawIcon(bg,offX + x,offY + y,i);
+                }
+            }
+
+            void drawIcon(Graphics g,int x,int y,int which)
+            {
+                switch (which)
+                {
+                case 0 : drawPointerIcon(g,x,y); return ;
+                case 1 : drawRotatorIcon(g,x,y);return ;
+                case 2 : drawTextIcon(g,x,y);return ;
+                case 3 : drawLineIcon(g,x,y);return ;
+                case 4 : drawRectIcon(g,x,y);return ;
+                case 5 : drawCircleIcon(g,x,y);return ;
+                case 6 : drawLineColorIcon(g,x,y);return ;
+                case 7 : drawFillIcon(g,x,y);return ;
+                case 8 : drawTextColorIcon(g,x,y);return ;
+                case 9 : drawLineStyleIcon(g,x,y);return ;
+                case 10 : drawLineWidthIcon(g,x,y);return ;
+                case 11: drawArrowStyleIcon(g,x,y);return ;
+                }
+            }
+
+            void drawLineWidthIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.black);
+                g.drawLine(x + 2,y + 3,x + 15,y + 3);
+                g.fillRect(x + 2,y + 7,14,3);
+                g.fillRect(x + 2,y + 13,14,5);
+            }
+
+            void drawLineColorIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.green);
+                g.fillRect(x + 1,y + 14,17,5);
+                g.setColor(Color.black);
+
+                int pts[] = { 6,10,8,11,9,14,10,16,10,16,11,16,12,16,14,16,16,16 };
+                for (int i = 12,j = 0;i >= 4;i--,j += 2) g.drawLine(x + pts[j],y + i,x + pts[j + 1],y + i);
+                g.setColor(Color.yellow);
+                g.drawLine(x + 9,y + 11,x + 14,y + 6);
+                g.drawLine(x + 11,y + 8,x + 12,y + 7);
+                g.setColor(new Color(128,128,0));
+                g.drawLine(x + 11,y + 10,x + 15,y + 6);
+                g.drawLine(x + 14,y + 8,x + 15,y + 7);
+            }
+
+            void drawTextIcon(Graphics g,int x,int y)
+            {
+                FontMetrics fm = g.getFontMetrics();
+                int w = fm.stringWidth("T");
+                int h = fm.getAscent();
+                g.setColor(Color.red);
+                g.drawString("T",x + 10 - (w >> 1),y + 10 + (h >> 1));
+            }
+
+            void drawTextColorIcon(Graphics g,int x,int y)
+            {
+
+                FontMetrics fm = g.getFontMetrics();
+                int w = fm.stringWidth("T");
+                int h = fm.getAscent();
+                g.setColor(Color.red);
+                g.drawString("T",x + 10 - (w >> 1),y + 12);
+                g.fillRect(x + 1,y + 14,17,5);
+            }
+
+            void drawArrowStyleIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.black);
+                for (int i = 0;i < 3;i++) g.drawLine(x + 3,y + 4 + (i * 6),x + 16,y + 4 + (i * 6));
+                for (int i = 0;i < 2;i++)
+                {
+                    g.drawLine(x + 3,y + 4 + (i * 6),x + 5,y + 2 + (i * 6));
+                    g.drawLine(x + 3,y + 4 + (i * 6),x + 5,y + 6 + (i * 6));
+                }
+                for (int i = 1;i < 3;i++)
+                {
+                    g.drawLine(x + 16,y + 4 + (i * 6),x + 14,y + 2 + (i * 6));
+                    g.drawLine(x + 16,y + 4 + (i * 6),x + 14,y + 6 + (i * 6));
+                }
+            }
+
+            void drawLineStyleIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.black);
+                g.drawLine(x + 2,y + 4,x + 17,y + 4);
+                g.drawLine(x + 2,y + 8,x + 5,y + 8);
+                g.drawLine(x + 8,y + 8,x + 11,y + 8);
+                g.drawLine(x + 14,y + 8,x + 14,y + 8);
+                for (int i = 0;i < 16;i += 2)
+                    g.drawLine(x + 2 + i,y + 12,x + 2 + i,y + 12);
+                g.drawLine(x + 2,y + 15,x + 5,y + 15);
+                g.drawLine(x + 6,y + 15,x + 6,y + 15);
+                g.drawLine(x + 8,y + 15,x + 10,y + 15);
+                g.drawLine(x + 12,y + 15,x + 12,y + 15);
+                g.drawLine(x + 14,y + 15,x + 16,y + 15);
+            }
+
+            void drawRotatorIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.blue.darker());
+                g.drawOval(x + 8,y + 8,4, 4);
+                g.setColor(Color.black);
+                g.drawLine(x + 4,y + 1,x + 8,y + 1);
+                g.drawLine(x + 8,y + 1,x + 8,y + 5);
+                g.drawRect(x + 6,y + 2,1,1);
+                g.drawRect(x + 4,y + 3,1,1);
+                g.drawRect(x + 3,y + 4,1,1);
+                g.drawRect(x + 2,y + 6,1,1);
+                g.drawRect(x + 1,y + 8,1,4);
+                g.drawLine(x + 2,y + 13,x + 2,y + 14);
+                g.drawLine(x + 3,y + 13,x + 3,y + 16);
+                g.drawLine(x + 4,y + 15,x + 4,y + 16);
+                g.drawLine(x + 5,y + 16,x + 6,y + 16);
+                g.drawLine(x + 5,y + 17,x + 14,y + 17);
+                g.drawLine(x + 7,y + 18,x + 12,y + 18);
+                g.drawLine(x + 13,y + 16,x + 16,y + 16);
+                g.drawLine(x + 15,y + 15,x + 16,y + 15);
+                g.drawRect(x + 16,y + 13,1,1);
+                g.drawRect(x + 17,y + 8,1,4);
+            }
+
+            void drawPointerIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.black);
+                g.fillRect(x + 1,y + 8,6,3);
+                g.fillRect(x + 12,y + 8,6,3);
+                g.fillRect(x + 8,y + 1,3,6);
+                g.fillRect(x + 8,y + 12,3,6);
+                g.drawLine(x + 7,y + 7,x + 11,y + 7);
+                g.drawLine(x + 7,y + 7,x + 7,y + 11);
+                g.drawLine(x + 11,y + 11,x + 11,y + 7);
+                g.drawLine(x + 11,y + 11,x + 7,y + 11);
+            }
+
+            void drawCircleIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.red);
+                g.drawOval(x + 2,y + 1,8,10);
+                g.setColor(Color.blue.darker());
+                g.drawOval(x + 2,y + 13,15,7);
+                g.setColor(Color.white);
+                g.fillOval(x + 12,y + 2,7,11);
+                g.setColor(Color.black);
+                g.drawOval(x + 12,y + 2,7,11);
+            }
+
+            void drawRectIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.red);
+                g.drawRect(x + 3,y + 1,5,8);
+                g.setColor(Color.black);
+                g.drawRect(x + 4,y + 10,10,6);
+                g.setColor(Color.blue.darker());
+                g.fillRect(x + 10,y + 3,6,10);
+            }
+
+            void drawLineIcon(Graphics g,int x,int y)
+            {
+                g.setColor(Color.blue.darker());
+                g.drawLine(x + 4,y + 5,x + 14,y + 15);
+                g.drawLine(x + 5,y + 4,x + 15,y + 14);
+            }
+
+            void drawFillIcon(Graphics g,int x,int y)
+            {
+                g.setColor(new Color(0,0,128));
+                g.drawLine(x + 3,y + 12,x + 3,y + 16);
+                g.drawLine(x + 2,y + 14,x + 2,y + 14);
+                g.drawLine(x + 4,y + 15,x + 4,y + 15);
+
+                g.setColor(Color.black);
+                g.drawLine(x + 4,y + 9,x + 11,y + 16);
+                g.drawLine(x + 6,y + 9,x + 10,y + 5);
+                g.drawLine(x + 11,y + 14,x + 15,y + 10);
+                g.drawLine(x + 4,y + 9,x + 4,y + 10);
+                g.drawLine(x + 10,y + 15,x + 10,y + 16);
+                g.drawLine(x + 11,y + 3,x + 11,y + 4);
+                g.drawLine(x + 17,y + 9,x + 17,y + 10);
+
+                g.setColor(new Color(0,128,128));
+                g.drawLine(x + 10,y + 4,x + 16,y + 10);
+                g.drawLine(x + 11,y + 13,x + 15,y + 9);
+                g.drawLine(x + 7,y + 10,x + 10,y + 13);
+                g.drawLine(x + 8,y + 9,x + 11,y + 12);
+                g.drawLine(x + 11,y + 15,x + 12,y + 14);
+
+                g.setColor(new Color(0,255,255));
+                g.drawLine(x + 11,y + 6,x + 14,y + 9);
+                g.drawLine(x + 8,y + 6,x + 12,y + 10);
+                g.drawLine(x + 7,y + 7,x + 11,y + 11);
+                g.drawLine(x + 6,y + 8,x + 10,y + 12);
+                g.drawLine(x + 15,y + 11,x + 13,y + 13);
+
+                g.setColor(Color.darkGray);
+                g.drawLine(x + 5,y + 9,x + 10,y + 14);
+                g.drawLine(x + 5,y + 11,x + 9,y + 15);
+            }
+        }
+    }
+}

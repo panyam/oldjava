@@ -1,0 +1,246 @@
+
+The Brewery application is an extendible Installer for installing Java (and
+possible other types of applications as well).  The idea is its small, easy
+to extend, and allow to create and deploy installers for programs.
+
+This will have 2 components, one that will be the "editor" or a "wizard"
+for specifying the files required for the installation, output directories,
+file groups and so on.  For now let us only target Java apps.  Which means,
+the main issues are jar files for the new classpath, VM options (both of
+these can be platform dependant).
+
+Also what would be good if there was an autopackager, that would take the
+application's class file or a set of class file names (as strings) and
+recursive include all class files into a jar file which would be required
+for a given application, from the output directory.
+
+Core Classes:
+-------------
+
+* The BreweryState class:  In each state, options can be entered, and
+  allows going forward and backwards to other states.
+
+* The Brewery class: This is what assembles and controls the navigation 
+  between various BreweryStates.  The two options are, each state can be
+  aware of other states or all the navigation-intelligence can be placced
+  in the Brewery class.  Both of these types are valid and should be
+  allowed depending on the complexity of the installer.
+  So this could be a GUI based installer or a Text based installer.  The
+  Brewery/Installer is the interface between the user and all guts of what
+  is happening inside and will controll and invoke all the necessary
+  classes.
+
+* Grinder class (or another name required), actually starts the
+  installation based on the options gathered from each of the BreweryState
+  objects.  This includes the tracking of installation status and progress
+  and doing all error reporting and so on.
+
+* The BreweryIO (package) is what does the saving and creation of the
+  installers.  The generated installer is a set of options and graphs that
+  determine how the states are traversed and what classes are used for this
+  traversal.
+
+File Formats:
+-------------
+
+It would be an obvious choice to store the options in XML but the XML
+parser may not be available.  So this download should be an allowable
+option or data must be stored in a proprietry format.  However this choice
+be sensed by what is available at the user.
+
+Features:
+---------
+
+* Small and fast.
+* Easy to use and MUST make installation of applications easy from the
+  users point of view.
+* The installer must have specialised behaviour for the type of application
+  being installed AND also depending on the target platform.
+* Tree based components:
+  - Select files and group them in groups.
+  - Allow sub groups to be allowed.  So that as part of the installation, a
+    tree based grouping can be allowed if required.
+
+The Grinder Component
+---------------------
+
+So the input the Grinder would be the "data" file or the "package" file
+that holds all the information about what files are to be installed and
+also the files themselves.
+
+So how are these files stored?  Some of the issues in this "package" file
+are:
+
+- Compact: All files including the intial setup's main java class should
+be in as little number of files as possible - idealy 1.  One of the
+option is that there could be one jar file which has ALL the files for
+installation and then followed by another jar file which has the
+installer files.  The package file will be the argument for the
+installer file.  In the package file there should be a "setup.dat" file
+that will hold information about what screens are to appear and so on.
+Also this setup.dat file will NOT be an XML file so this way, encryption
+can be done (well XML can also allow it but still).  Also the other
+advantage is that the XML libraries will not have to be installed if not
+required.  (Of course this means the file format parsing and all will
+have to be done by hand and this could be a hassle).
+
+The setup file (which has no harcoded name and will exist OUTSIDE the
+package so that the Grinder can read it) will have the following
+requirements.
+
+- Can be stored in any format.  A default (bin or txt) format will be
+  provided that can be used however, other formats are applicable too
+  but these readers and writers will have to be provided by the
+  application designer.  This may be an inherent security risk because
+  the readers and writers will be provided as part of the package, in
+  which case, any person with intelligence can call certain functions in
+  the reader classes (with the reflection API) to decrypt the
+  information held in the setup file.  For example, a screen could be
+  the "enter license info" screen.  Now there could be parameters here
+  that should not be easily opened.  So how will this be "encoded" in
+  the setup file.  For this, the first item in the setup file that
+  describes "how" the file should be opened.  Ie an extractor class name
+  that will be loaded in order to read the rest of the file.  So in
+  essence the wizard that generates the setup file will first create the
+  file and then encode the Setup File (SF) using the appropriate enoder
+  to result in the encoded setup file (ESF).  In order to decode the
+  file, the decoder class name must be known.  This can be sent to the
+  installer by prepending the name of the decoder class to the ESF.
+
+  So         ESF = ClassName + ESF.
+
+  The class name does not strictly have to be a class name like
+  com.java.Extractor or so on.  It can be a keyword or ID like
+  "Zipper" that may be used as a key into a hashtable to load the
+  appropriate decoder.
+
+- Contain Screens information
+ -   Screen Class name: This screen class once loaded from the installer
+     jar file will be responsible for reading information pertaining to
+     itself from the setup.dat file.
+
+- Contain Package Information:
+ -   List of packages, the files within, the sub packages and package
+     dependancies.
+     No two packages will have the same package name for uniqueness
+     purposes.
+
+- Security: Following are the issues:
+    -   Setup file security is the only one considered.  How the "other"
+        package files are secured is an application issue.
+    -   Now given a setup file, how is the Grinder to know which
+        SetupReader file to use when openign the file.  The wizard can
+        choose to write it in XML or Text or CSV or any other format, how
+        should this format be known to the Grinder.
+    -   A format checker factory object is required that would look at the
+        file name and the input stream and determine the kind of file it
+        is.  After this inspection, it could return the appropriate
+        SetupReader class to proceed with the already opened file or close
+        and reopen the file or simply unread the read symbols and start
+        again.
+    -   The Setupfile should be secured so that if its edited in an invalid
+        way, then Grinder should refuse to read it and not proceed at all.
+        So a special CRC may be required that ONLY the Grinder knows about
+        and will use.  This CRC generator is somethign that should be
+        changeable depending on who is deploying the project.  The default
+        CRC generator may be something that does nothing however other
+        generators can be used by developers who want to deploy their own
+        applications and CRC generators (both varying lengths and
+        generation types).
+    -   A CRC generator object is actually useful because the SetupReader
+        if it has to read the contents of the file (after detection of the
+        right file format), it has to know what length the CRC is and etc.
+        The SetupWriter would have put in information regarding the CRC
+        lengths and types used and so this info will have to be known to
+        the Reader.  This is where the problem occurs.  If the CRC section
+        of the input file is known, then as mentioned before the CRC could
+        be over written along with the CRC class type and re read.  Or even
+        worse another class with the same CRC class name could be created
+        and used to read the file instead.
+    -   The best course of action would be to have the SetupWriter,
+        SetupReader and CRCGenerator classes to be extendible by the
+        developer so that all these can be custom developed to suit the
+        specific security needs of the developer and their applications.
+    -   If the SetupReader and Writer classes can be custom developed, then
+        how would the format checker know of "new" types?  Since the source
+        code for this is also available, this class can be overridden (not
+        extended, but overridded literally) so that two different
+        developers who create these files, will have different ways in
+        which they will associate input files with corresponding
+        SetupReader objects.  So in a FormatChecker object created by, say
+        developer A, it might simply check for extensions and return the
+        SetupReader object, where as in another FormatChecker object, eg
+        created by developer B, it may probe the file inside and check for
+        content before it would determine the setup files.  Or in the
+        simplest case, it may return a static Class name each time to
+        indicate that it will try to use the same SetupReader object on ANY
+        type of file.
+
+The Setup File Format
+---------------------
+For now assuming there is no security restriction (and hence no installer
+level encryption), this is the setup file format (there can be other file
+formats which can be implemented in specialised SetupReader and
+SetupWriter classes):
+
+Magic Number for Installer and other meta tags.  May be other information
+as well in the form of attribute value pairs
+[screen section]
+[package section]
+[.. and all other sections which will be evolved into ..]
+
+Task Information:----------------------------------------
+<post startup tasks> followed by <finalising tasks>
+Specifies information required by the tasks.
+
+Screen Information:--------------------------------------
+Num Screens (an integer)
+
+For Each screen:
+    Screen Class Name
+    Screen Class Data
+
+Package Information:-------------------------------------
+
+The main pieces of info to store here are packages, who they belong to, and
+dependant packages.  Each packages can be identified by an ID (generated)
+or by a name.  An integer would be the best one as it can be easily
+generated.  Also, it would be advantages for packages to be stored in
+sorted order so that the parent will be read before the children, however
+this is not necassary.
+
+First we need the target directory list:
+This will be 
+nDirectories followed by nDirectoreies (length, string) pairs.
+
+Then there will be nPackages followed by this many package entries.
+
+So each package would be:
+
+Package ID - 
+    Integer
+
+Package Name - 
+    (Stringlength, String) pair.
+
+Parent Package ID - 
+    Integer (0 if none exists).
+
+Package Description - 
+    (Stringlength, String) pair.
+
+Dependant Packages - 
+    (NumPacks followed by NumPack numbers, each denoting a package ID).
+
+File Count - Int
+    For each file, 
+        read the file name... Eg xxx/yyy/zzz/asdfasd - this will be a file
+        within the package archive.  This will be denoted by a (length,
+        string) pair.
+        Read the File's target directory.  This will be an integer.  The
+        idea is that since, there will only a few directories where the
+        files can go to, there is no point in repeating the target
+        directories each time.  So build a table of target directories
+        (either absolute, eg c:\zxcvzxv or /usr/local or relative eg
+        ../../asdfadsf or \asdf and use their indices).  This would save
+        considerable space.

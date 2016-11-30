@@ -1,0 +1,228 @@
+
+package com.sri.netsim.firewall;
+
+import com.sri.utils.*;
+import com.sri.utils.adt.*;
+import com.sri.netsim.routing.*;
+import com.sri.netsim.firewall.target.*;
+import com.sri.netsim.*;
+
+/**
+ * A table.  This is basically wehre a packet does all its work.
+ */
+public class Table
+{
+    String name;
+
+        /**
+         * List of chains created by the user.
+         */
+    Chain chains[] = new Chain[3];
+
+        /**
+         * Number of chains.
+         */
+    int nChains = 0;
+
+        /**
+         * Default constructor.
+         */
+    protected Table()
+    {
+    }
+
+        /**
+         * Name of the table.
+         */
+    public Table(String name)
+    {
+        this.name = name;
+    }
+
+        /**
+         * Get a packet into this chain at the starting
+         * chain and follow the chain.
+         * On Return:
+         *  null is returned if the packet was dropped
+         *  otherwise the packet itself is returned, 
+         *  Note that the contents of the packet may have changed.
+         */
+    public Packet processPacket(Packet packet, Chain startingChain)
+        throws Exception
+    {
+        return packet;
+    }
+
+        /**
+         * Flush all rules in a given chain.
+         * If the given chain is null then all rules
+         * in all chains in the table are flushed.
+         */
+    public void flushChain(String chainName)
+        throws Exception
+    {
+        if (chainName == null || chainName == "")
+        {
+            for (int i = 0;i < nChains;i++)
+            {
+                chains[i].flushRules();
+            }
+        } else
+        {
+            int index = getChainIndex(chainName);
+            if (index >= 0)
+            {
+                chains[index].flushRules();
+            } else
+            {
+                throw new Exception("Chain \"" + chainName + "\" not found.");
+            }
+        }
+    }
+
+        /**
+         * Delete all the deleteable chains in the table.
+         */
+    public void deleteAllChains() throws Exception
+    {
+        int currPos = 0;
+        for (int i = 0;i < nChains;i++)
+        {
+            if ( ! chains[i].isDeleteable)
+            {
+                Chain temp = chains[currPos];
+                chains[currPos] = chains[i];
+                chains[i] = temp;
+                currPos++;
+            }
+        }
+
+        for (int i = currPos;i < nChains;i++)
+        {
+            deleteChain(i);
+        }
+        nChains = currPos;
+    }
+
+        /**
+         * Delete a given chain.
+         */
+    public void deleteChain(String name)
+        throws Exception
+    {
+        int index = getChainIndex(name);
+        if (index >= 0) deleteChain(index);
+    }
+
+        /**
+         * Delete a given chain.
+         */
+    public void deleteChain(int index)
+        throws Exception
+    {
+        if (index < 0) throw new Exception("Invalid chain index.");
+        if (chains[index].isDeleteable)
+        {
+                // also check if the chain has any references to it...
+            for (int i = 0;i < nChains;i++)
+            {
+                    // dont check the chain pointed to by index
+                if (i == index) continue;
+                    // see if there any references here...
+                for (int j = 0;j < chains[i].nRules;j++)
+                {
+                    if (chains[i].rules[j].target == chains[index])
+                    {
+                        throw new Exception("Cannot delete referenced chain.");
+                    }
+                }
+            }
+
+                // no references to this chain.. so proceed
+            chains[index].flushRules();
+            chains[index] = null;
+            System.arraycopy(chains, index + 1, 
+                             chains, index,
+                             nChains - (index + 1));
+            nChains--;
+            chains[nChains] = null;
+        } else
+        {
+            throw new Exception("Predefined chains cannot be deleted.");
+        }
+    }
+
+        /**
+         * Find chain by the name.
+         */
+    public Chain getChain(String name)
+    {
+        int index = getChainIndex(name);
+        if (index < 0) return null;
+        return chains[index];
+    }
+
+        /**
+         * Get the index of a given chain
+         * within a given table.
+         */
+    public int getChainIndex(String name)
+    {
+        for (int i = 0;i < nChains;i++)
+        {
+            if (chains[i].name.equalsIgnoreCase(name)) return i;
+        }
+        return -1;
+    }
+
+        /**
+         * Inserts a new chain at the given spot.
+         */
+    public void insertChain(String name, int index)
+    {
+        insertChain(name, true, index);
+    }
+
+        /**
+         * Inserts a new chain at the given spot.
+         */
+    public void insertChain(String name, boolean isDel, int index)
+    {
+            // if table already exists then
+            // dont do anything...
+        if (getChainIndex(name) >= 0) return ;
+        if (chains.length <= nChains)
+        {
+            Chain ch[] = chains;
+            chains = null;
+            chains = new Chain[nChains + 2];
+            System.arraycopy(ch , 0, chains, 0, nChains);
+            ch = null;
+        }
+
+        Chain newChain = new Chain(nChains, name, isDel);
+        if (index == nChains) chains[nChains] = newChain;
+        else
+        {
+            System.arraycopy(chains, index, chains, index + 1,nChains-index);
+            chains[index] = newChain;
+        }
+        nChains++;
+    }
+
+        /**
+         * Add a new chain with the given name to the given table.
+         */
+    public void addChain(String name)
+    {
+        addChain(name, true);
+    }
+
+        /**
+         * Add a new chain with the given name to the given table.
+         */
+    public void addChain(String name, boolean isDeleteable)
+    {
+        insertChain(name, isDeleteable, nChains);
+    }
+}

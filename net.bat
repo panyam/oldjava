@@ -1,0 +1,6 @@
+@echo off
+core
+echo Building Test Classes...
+%JCC% %JFLAGS% com\sri\test\*.java 
+echo Building NetSim Classes...
+%JCC% %JFLAGS% com\sri\apps\netsim\*.java

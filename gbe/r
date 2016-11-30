@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd classes
+java ExpNodeFactory $1
+cd ..

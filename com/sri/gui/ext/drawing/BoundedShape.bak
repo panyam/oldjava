@@ -1,0 +1,894 @@
+package com.sri.gui.ext.drawing;
+
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+
+import com.sri.gui.ext.backgrounds.*;
+import com.sri.gui.ext.borders.*;
+
+/**
+ * This class is a child class of the Shape object which
+ * describes a closed/bounded shape.
+ * TODO:: Controlling os shape
+ * TODO:: Shearing of shapes
+ */
+public abstract class BoundedShape extends Shape
+{
+    protected final static int ON_NO_AREA = 0;
+    protected final static int ON_MOVING_AREA = 1;
+    protected final static int ON_SIZING_AREA = 2;
+    protected final static int ON_ROTATING_AREA = 3;
+
+    protected short nListeners = 0;
+    protected short maxSize = 20;
+    protected ShapeListener []listeners = new ShapeListener[maxSize];
+    protected final static int sizeIncr = 5;
+
+    //protected String text = "";
+
+        /**
+         * The transform of this object.
+         */
+    protected Transform transform;
+
+        /**
+         * The temporary transform.
+         */
+    protected Transform temp;
+
+        /**
+         * The fill color.
+         */
+    protected Color fillColor = null;
+
+        /**
+         * Fill type of the shape.
+         */
+    protected Background background = null;
+
+        /**
+         * Given a control point, tells which sides are affected
+         * by dragging the given size point.
+         * so affectedSegments[0] gives the list of sides which are affected
+         * by dragging size point 0.
+         * Basically each list in affectedSegments contains at least 2
+         * numbers and has the form { starting point, next points...  }
+         * So all the linesegments are of the form (start, next1),
+         * (start, next2) and so on
+         *
+         * The segments are organised carefully too.  eg the 5th point 
+         * (2, 3, 1) could have been specified as (2, 1, 3) but we are
+         * making sure that we specify points such that the first segment
+         * affects the height and the second one affects the width!!!
+         */
+    protected final static byte affectedSegments[][] =
+    {
+        { 0, 1, 3  }, { 0, 1    }, { 1, 0, 2 }, { 1, 2  },
+        { 2, 3, 1  }, { 2, 3    }, { 3, 2, 0 }, { 3, 0  },
+    };
+
+        /**
+         * This is the bounds of this object.
+         * This polygon has only 4 points at any time.
+         */
+    protected Polygon bounds = new Polygon();
+
+        /**
+         * These points are the ones, which when
+         * dragged will change the size of the shape.
+         * These are in similar format to the the control points
+         * however, these are declared static because the
+         * location of the sizing points can never change.
+         * All derived shapes have these points at the same place.
+         * These are actually areas in terms of percentages.
+         * we made it so that you can have only integer value
+         * as the percentages so each value is between 0 and 100
+         * inclusive.
+         */
+    protected final static Point sizePoints[] =
+    {
+        new Point(0,0),        new Point(50,0),    new Point(100,0),
+        new Point(0,50),                        new Point(100,50),
+        new Point(0,100),    new Point(50,100),    new Point(100,100),
+    };
+
+        /**
+         * The internal control points.
+         * These are the points which when
+         * dragged on will change the look of the 
+         * actualy drawable object.
+         * Each point is a percentage of the position of 
+         * where it occurs.  Since a short is 16 bits, the
+         * first 8 bits corresponds to the x coordinate of the
+         * point and the second 8 bits corresponds to the 
+         * y coordinate.
+         */
+    protected short controlPoints[] = null;
+
+        /**
+         * The cursor at different size points.
+         */
+    protected final static int sizeCursors[] =
+    {
+        Cursor.NW_RESIZE_CURSOR,
+        Cursor.N_RESIZE_CURSOR,
+        Cursor.NE_RESIZE_CURSOR,
+        Cursor.E_RESIZE_CURSOR,
+        Cursor.SE_RESIZE_CURSOR,
+        Cursor.S_RESIZE_CURSOR,
+        Cursor.SW_RESIZE_CURSOR,
+        Cursor.W_RESIZE_CURSOR,
+    };
+
+        /**
+         * If you hold on these points and move the mouse,
+         * the object actually rotates.  Once again, these
+         * points cannot be changed.
+         * All derived shapes have these points at the same place.
+         * These are actually areas in terms of percentages.
+         * we made it so that you can have only integer value
+         * as the percentages so each value is between 0 and 100
+         * inclusive.
+         */
+    protected static Point rotationPoints[] =
+    {
+        new Point(0,0),        new Point(100,0),
+        new Point(0,100),    new Point(100,100),
+    };
+
+        /**
+         * Constructor
+         */
+    protected BoundedShape()
+    {
+            // now also add a translation of 50 to the transform matrix.
+        temp = new Transform2D();
+        transform = new Transform2D();
+        transform.translate(150,150);
+    }
+
+        /**
+         * Calculates the bounds after the current 
+         * transformation has been applied.
+         */
+    public void calculateBounds()
+    {
+            // to this transformation and recalculate new
+            // boundary values of the bounding box.
+        bounds.npoints = 0;
+        int st = this.getStartingPoint();
+        int dist[] = new int[4];
+        int quadrant[] = new int[4];
+        int newPoints[][] = new int[4][2];
+        int nPoints = 0;
+
+        // TODO:: Not sure if we need to do i + st or just i
+        for (int i = 0;i < 4;i++)
+        {
+            newPoints[i][0] = (int)(0.5 + ((Transform2D)transform).transform(Transform.X,initialBounds[i][0],initialBounds[i][1]));
+            newPoints[i][1] = (int)(0.5 + ((Transform2D)transform).transform(Transform.Y,initialBounds[i][0],initialBounds[i][1]));
+        }
+
+                // get the center poitns...
+        int cx = (newPoints[0][0] + newPoints[2][0]) >> 1,
+            cy = (newPoints[0][1] + newPoints[2][1]) >> 1;
+
+        for (int i = 0;i < 4;i++)
+        {
+                    // go thru all points and
+                    // consider only those points
+                    // that are in the 2nd quadrant...
+            if (newPoints[i][0] <= cx && newPoints[i][1] <= cy)
+            {
+                quadrant[nPoints++] = i;
+                dist[i] = (newPoints[i][0] - cx) * (newPoints[i][0] - cx) +
+                          (newPoints[i][1] - cy) + (newPoints[i][1] - cy);
+            }
+        }
+
+        st = quadrant[0];        // starting point is currently the first one in
+                                // the 2nd quadrant list...
+        for (int i = 1;i < nPoints;i++)
+        {
+            if (dist[quadrant[i]] > dist[st]) st = quadrant[i];
+        }
+
+        st = 0;
+        setStartingPoint(st << 1);
+
+                /**
+                 * Now we shift all items in the bounds array
+                 * by a certain value so that the first
+                 * item in the bounds array starts with
+                 * the starting index....
+                 */
+        for (int i = 0;i < 4;i++)
+        {
+            int next = (i + st) % 4;
+            bounds.addPoint(newPoints[next][0],newPoints[next][1]);
+        }
+
+		// TODO:: calculate the inverse matrix....
+    }
+
+        /**
+         * Returns The text of this shape.
+         */
+    public String getText()
+    {
+        return "";//text;
+    }
+    
+        /**
+         * Sets the current transform.
+         */
+    public void setTransform(Transform tr)
+    {
+        if (transform == null)
+        {
+            transform = new Transform2D();
+        }
+
+        if (tr != null) 
+        {
+            this.transform.copyFrom(tr);
+        }
+        calculateBounds();
+    }
+
+        /**
+         * Sets the text of this shape.
+         */
+    public void setText(String s)
+    {
+        //text = s;
+    }
+
+        /**
+         * Sets the fill color of this shape.
+         */
+    public void setFillColor(Color c)
+    {
+        fillColor = c;
+    }
+
+        /**
+         * Gets the fill color of this shape.
+         */
+    public Color getFillColor()
+    {
+        return fillColor;
+    }
+
+        /**
+         * Paints all the size points.
+         *
+         * By default most objects will have the same
+         * type of size points. ie all drawable objects
+         * will have rectangular boundaries so the size
+         * points will lie along this rectangle.
+         */
+    protected void drawSizePoints(Graphics g)
+    {
+        Color store = g.getColor();
+        g.setColor(outlineColor);
+        for (int i = 0;i < 4;i++)
+        {
+            int cx = bounds.xpoints[i];
+            int cy = bounds.ypoints[i];
+            if (i == 0) g.fillRect(cx - 3,cy - 3,6,6);
+            else g.drawRect(cx - 3,cy - 3,6,6);
+            int next = (i + 1) % 4;
+            cx = (bounds.xpoints[i] + bounds.xpoints[next]) >> 1;    // shift instead of div / 2
+            cy = (bounds.ypoints[i] + bounds.ypoints[next]) >> 1;    // cos shifting is faster
+                                                                    // than division.
+            g.drawRect(cx - 3,cy - 3,6,6);
+        }
+        g.setColor(store);
+    }
+
+        /**
+         * Draw the control points for this shape.
+         */
+    protected void drawControlPoints(Graphics g)
+    {
+        Color store = g.getColor();
+        for (int i = 0;i < controlPoints.length;i++)
+        {
+                // now each control point has info about the
+                // percentage of x and y coordinates at which
+                // the control point occurs.
+                // but our initial box size is actually 100 x 100.
+                // so if we have to go 50 % of the way then just go
+                // -50 + 50 pixels instead of havin to do a 
+                // division by 100 and then multiplyin by a 100
+                // this way it is faster as well..
+                // so all we need to do is basically apply the
+                // transform to this point and draw it...
+            int cx = ((controlPoints[i] >> 8) & 0xff) - 50;
+            int cy = ((controlPoints[i]) & 0xff) - 50;
+            
+            int nx = (int)((Transform2D)transform).transform(Transform.X,cx,cy);
+            int ny = (int)((Transform2D)transform).transform(Transform.Y,cx,cy);
+            
+            g.setColor(Color.yellow);
+            g.fillRect(nx - 3,ny - 3,6,6);
+            g.setColor(Color.black);
+            g.drawRect(nx - 3,ny - 3,6,6);
+        }
+        g.setColor(store);
+    }
+
+        /**
+         * Draws the shear control points.
+         */
+    protected void drawShearingPoints(Graphics g)
+    {
+        Color store = g.getColor();
+        g.setColor(outlineColor);
+        g.fillOval(bounds.xpoints[0] - 3,bounds.ypoints[0] - 3,6,6);
+        for (int i = 1;i < 4;i++)
+        {
+            int cx = bounds.xpoints[i];
+            int cy = bounds.ypoints[i];
+            g.drawOval(cx - 3,cy - 3,6,6);
+        }
+        g.setColor(store);
+    }
+
+        /**
+         * Draws the rotation points.
+         */
+    protected void drawRotationPoints(Graphics g)
+    {
+        Color store = g.getColor();
+        g.setColor(outlineColor);
+        g.fillOval(bounds.xpoints[0] - 3,bounds.ypoints[0] - 3,6,6);
+        for (int i = 1;i < 4;i++)
+        {
+            int cx = bounds.xpoints[i];
+            int cy = bounds.ypoints[i];
+            g.drawOval(cx - 3,cy - 3,6,6);
+        }
+        g.setColor(store);
+    }
+
+        /**
+         * Adds a shape listener to the list of listeners.
+         */
+    public synchronized void addShapeListener(ShapeListener l) {
+        if (l != null)
+        {
+                // check for duplicates
+            for (int i = 0;i < nListeners;i++) {
+                if (listeners[i] == l) return ;
+            }
+
+                // increase list size if max reached
+            if (nListeners == maxSize) {
+                maxSize += sizeIncr;
+                ShapeListener []second = new ShapeListener[maxSize];
+                System.arraycopy(listeners,0,second,0,nListeners);
+                listeners = null;
+                System.gc();
+                listeners = second;
+            }
+            listeners[nListeners++] = l;
+        }
+    }
+
+        /**
+         * Removes a shape listener from the list of listeners.
+         */
+    public synchronized void removeShapeListener(ShapeListener l)
+    {
+        if (l != null)
+        {
+            for (int i = 0;i < nListeners;i++)
+            {
+                if (l == listeners[i])
+                {
+                    System.arraycopy(listeners,i + 1,listeners,i,nListeners - i - 1);
+                    nListeners --;
+                    return ;
+                }
+            }
+        }
+    }
+
+        /**
+         * Takes care of the mouse handling.
+         *
+         * Only does basic handling like moving, resizing and rotation.
+         * The idea is that only the control point manipulation is
+         * done by the more specific child shapes.  THis is because all
+         * shapes have the size points, rotation points at the same place..
+         * We can put the moving in here if we place constraint that moving
+         * has to be done by draggin on the border lines.  This way we can
+         * make the code simpler.  Currently we are making it so that
+         * if we have a fill then you can move from inside as well but
+         * with no fill you can only move it by placing on the border lines.
+         * Or another option is we can move it if you place and drag the mouse
+         * anywhere inside the bounds.  This is more logical and also easier
+         * for the user.  THe only trouble with this is that if there is no
+         * fill, and if there is another shape under this shape, which
+         * is visible, You cannot move that shape even though u can see it.
+         */
+    public int processMouseEvent(MouseEvent e, int mX, int mY, SceneViewer shapeRenderer)
+    {
+            // now check if we are actually in
+        int id = e.getID();        // get the type of mouse event.
+        if (id == MouseEvent.MOUSE_MOVED)
+        {
+            return mouseMoved(mX, mY, shapeRenderer);
+        } else if (id == MouseEvent.MOUSE_PRESSED)
+        {
+                // first see if this shape is bein created coz if it is
+                // then none of the other options are effective...
+            if (isCreating())
+            {
+                pressedX = e.getX();
+                pressedY = e.getY();
+                transform.reset();
+                return 0;
+            }
+            return mousePressed(e.getX(),e.getY(),shapeRenderer,e.isMetaDown());
+        } else if (id == MouseEvent.MOUSE_DRAGGED)
+        {
+                // first see if this shape is bein created coz if it is
+                // then none of the other options are effective...
+            if (isCreating())
+            {
+                int currentX = e.getX(), currentY = e.getY();
+                if (currentX == pressedX) currentX++;
+                if (currentY == pressedY) currentY++;
+
+                int w = currentX - pressedX;
+                int h = currentY - pressedY;
+
+                transform.reset();
+                ((Transform2D)transform).scale((float)(w / 100.0),(float)(h / 100.0));
+                ((Transform2D)transform).translate((currentX + pressedX) >> 1,(currentY + pressedY) >> 1,0);
+
+                setTransform(transform);
+                return 0;
+            }
+            return mouseDragged(mX, mY, shapeRenderer);
+        } else if (id == MouseEvent.MOUSE_RELEASED)
+        {
+            return mouseReleased(mX, mY, shapeRenderer);
+        }
+        return 0;
+    }
+
+        /**
+         * Processes a mouse released event.
+         */
+    protected int mouseReleased(int x,int y,SceneViewer shapeRenderer)
+    {
+        if (isCreating())
+        {
+            //transform.calcInverse(inverse);
+            setCreating(false);
+        } else if (isTransforming())
+        {
+            //transform.calcInverse(inverse);
+            setTransforming(false);
+            setTransform(temp);
+        }
+        return 0;
+    }
+
+        /**
+         * Processes a mouse dragged event.
+         */
+    protected int mouseDragged(int x,int y,SceneViewer shapeRenderer)
+    {
+                    /**
+                     * This is the hardest of all.
+                     *
+                     * What we do now is generate a new transformation
+                     * matrix and impose that onto the current matrix
+                     * and store that as temp.
+                     */
+        if (this.currDragPoint < 0) return 0;
+
+        setTransforming(true);
+
+            // calculate the parameters for the new transform matrix
+            // based on the pressed location, current location,
+            // transform type and the transform point...
+        int mm = getMouseMode();
+        if (mm == Shape.TRANSLATING_MODE)
+        {
+            temp.copyFrom(transform);           // copy the current
+                                                // transform onto the
+                                                // temporary one.
+                                                // must somehow avoid
+                                                // copying of matrices
+            temp.translate(x - pressedX, y - pressedY);
+        } else if (mm == Shape.SCALING_MODE)
+        {
+                    // startingIndex will be 0 for the time being...
+
+                    // what is the starting point...
+            int cdp = currDragPoint - 1;
+            double sx = 1.0, sy = 1.0;
+                // the current center of this object...
+            float currX = (bounds.xpoints[0] + bounds.xpoints[2]) / 2,
+                  currY = (bounds.ypoints[0] + bounds.ypoints[2]) / 2;
+                // the new center of this object AFTER the scaling
+            float newX = 0, newY = 0;
+
+                // the first point being affected by the scaling of
+                // the current point...
+            int ap1 = affectedSegments[cdp][0];
+            int ap2 = affectedSegments[cdp][1];
+
+                // distance from the current point to the first and
+                // second sides...
+            double dist1, dist2;
+
+                // the width and height squared...
+            double width, height;
+
+                // perpendicular distance from mouse location
+                // to the first line segment...
+            dist1 = distBwPointAndLine(x, y,
+                                       bounds.xpoints[ap1],bounds.ypoints[ap1],
+                                       bounds.xpoints[ap2],
+                                       bounds.ypoints[ap2]);
+
+
+                // the width and height of the shape...
+            width = lineLength(bounds.xpoints[0], bounds.ypoints[0],
+                                         bounds.xpoints[1],bounds.ypoints[1]);
+            height = lineLength(bounds.xpoints[0], bounds.ypoints[0],
+                                          bounds.xpoints[3],bounds.ypoints[3]);
+
+                // if we are doing a point that affects 2 sides...
+            if (cdp % 2 == 0)
+            {
+                int ap3 = affectedSegments[cdp][2];
+                dist2 = distBwPointAndLine(x, y,
+                                       bounds.xpoints[ap1],bounds.ypoints[ap1],
+                                       bounds.xpoints[ap3],bounds.ypoints[ap3]);
+
+                    // since we have 2 segments, and since we have
+                    // organised the segments in such a way that the first
+                    // dist1 always affects the height and dist2 always
+                    // affects the width.
+                if (cdp == 0 || cdp == 4)
+                {
+                    sy = (height - dist1) / height;
+                    sx = (width + dist2) / width;
+                } else
+                {
+                    sy = (height + dist1) / height;
+                    sx = (width - dist2) / width;
+                }
+                newX = currX + (x - pressedX) / 2;
+                newY = currY + (y - pressedY) / 2;
+            } else
+            {
+                if (cdp == 1 || cdp == 5)
+                {
+                    sy = (height - dist1) / height;
+                } else
+                {
+                    sx = (width - dist1) / width;
+                }
+                newX = (x - pressedX) / 2;
+                newY = (y - pressedY) / 2;
+            }
+                // this the translation we need:::
+                // T back to origin
+                // Scale by sx, sy
+                // and T to the new center
+            temp.copyFrom(transform);           // copy the current
+                                                // transform onto the
+                                                // temporary one.
+                                                // must somehow avoid
+                                                // copying of matrices
+            temp.translate(-currX, -currY);
+            ((Transform2D)temp).scale((float)(sx), (float)(sy));
+            temp.translate(newX, newY);
+
+                // first do the first line in the list of lines...
+        } else if (mm == Shape.ROTATING_MODE)
+        {
+                    // find the midpoint of the shape...
+                    // this is at the intersection of the two
+                    // diagonals...
+                    // and in all parallellograms, the diagonals
+                    // intersect at the mid point...
+            int cx = (bounds.xpoints[0] + bounds.xpoints[2]) >> 1;
+            int cy = (bounds.ypoints[0] + bounds.ypoints[2]) >> 1;
+
+            double theta1 = Math.atan2(pressedY - cy,pressedX - cx);
+            double theta2 = Math.atan2(y - cy,x - cx);
+            double diff = theta2 - theta1;
+
+            temp.copyFrom(transform);           // copy the current
+                                                // transform onto the
+                                                // temporary one.
+
+            ((Transform2D)temp).rotate((float)Math.cos(diff),
+                                       (float)Math.sin(diff),
+                                       cx,cy);
+        } else if (mm == Shape.SHEARING_MODE)
+        {
+        }
+
+            // now apply this new transsorm onto
+            // the current transform..
+        //temp.apply(newTransform);
+        return 0;
+    }
+
+        /**
+         * Processes a mouse pressed event.
+         */
+    protected int mousePressed(int x,int y,SceneViewer shapeRenderer,boolean rightMouse)
+    {
+
+                    /**
+                     * First see where the mouse was pressed.
+                     */
+        this.setVisiblePoints(rightMouse ? Shape.SHOW_ROTATION_POINTS:
+                                               Shape.SHOW_DEFAULT_POINTS);
+        currDragPoint = getMouseLocation(x,y);
+        this.setMouseMode(Shape.NORMAL_MODE);
+
+        if (currDragPoint == 0) return 0;
+
+            // store where the mouse was pressed.
+        pressedX = x;
+        pressedY = y;
+
+        if (currDragPoint < 9 && isResizable())         // object being resized
+        {
+            this.setMouseMode(Shape.SCALING_MODE);
+        }
+        else if (currDragPoint < 13 && isRotatable())   // object being rotated
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            this.setMouseMode(Shape.ROTATING_MODE);
+        }
+        else if (currDragPoint < 17 && isShearable())   // object being sheared
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            this.setMouseMode(Shape.SHEARING_MODE);
+        }
+        else if (currDragPoint == 17 && isMovable())    // object being moved
+        {
+            this.setMouseMode(Shape.TRANSLATING_MODE);
+        }
+        return currDragPoint;
+    }
+
+        /**
+         * Processes a mouse move event.
+         */
+    protected int mouseMoved(int x,int y,SceneViewer shapeRenderer)
+    {
+        int loc = getMouseLocation(x,y);
+        if (loc == 0) return 0;
+        shapeRenderer.setCursor(Cursor.getDefaultCursor());
+        if (loc < 9)
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(sizeCursors[loc - 1]));
+        } else if (loc < 13)
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else if (loc < 17)
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else if (loc == 17)
+        {
+            shapeRenderer.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        }
+        return loc;
+    }
+
+        /**
+         * Given the mouse coordinates, tells where we are.
+         * The outputs are:
+         *
+         *  < 0         ->    For control points.
+         *    0         ->    No valid area
+         *  1 - 8       ->    On one of the sizing points.
+         *  9 - 12      ->    On one of the rotating points.
+         * 13 - 16      ->    On one of the shearing points.
+         * 17           ->    Movable
+         * 18 -         ->    defined by derived child classes.
+         */
+    public int getMouseLocation(int x,int y)
+    {
+            // first check if there are any size points.
+        int wh = this.getVisiblePoints();
+        int out = BoundedShape.ON_NO_AREA;
+        boolean notFound = true;
+        int whichPoint = 0;
+        int w = -1;
+
+            // see if we are on top of any of the control points..
+        for (;whichPoint < 4 && notFound;whichPoint++,w++)
+        {
+            int cx = bounds.xpoints[whichPoint];
+            int cy = bounds.ypoints[whichPoint];
+            int nextPoint = (whichPoint + 1) % 4;
+            notFound = !(x > cx - 4 && x < cx + 4 && y > cy - 4 && y < cy + 4);
+            if (notFound)
+            {        // then try the next point.
+                int next = (whichPoint + 1) % 4;
+                cx = (cx + bounds.xpoints[next]) / 2;
+                cy = (cy + bounds.ypoints[next]) / 2;
+                notFound = !(x > cx - 4 && x < cx + 4 && y > cy - 4 && y < cy + 4);
+                w++;
+            }
+        }
+
+            // if we are not on any sizing point...
+        if (notFound)
+        {
+            return (bounds.contains(x,y) ? 17 : 0);
+        } else
+        {        // if we ARE on a point then see if it valid...
+            if (wh == Shape.SHOW_DEFAULT_POINTS) // means we are in move
+            {                                       // or resize mode
+                return 1 + w;
+            } else if (wh == SHOW_ROTATION_POINTS)  // means we are in rotation mode
+            {
+                return (w % 2 == 0 ? 9 + (w >> 1) : 17);
+            } else if (wh == SHOW_SHEARING_POINTS)  // means we are in shearing mode
+            {
+                return (w % 2 == 0 ? 13 + (w >> 1) : 17);
+            }
+                // if no points are showing, then just make
+                // it a mouse moving option.
+            return 17;
+        }
+    }
+
+        /**
+         * Tells if a given pixel in the screen is inside
+         * this object.
+         */
+    public boolean contains(int x,int y)
+    {
+        return bounds.contains(x,y);
+    }
+    
+        /**
+         * Sets or clears the rotatable option.
+         */
+    public final void setRotatable(boolean r)
+    {
+        if (r) flags |= ROTATABLE_MASK;
+        else flags &= (0xffffffff ^ ROTATABLE_MASK);
+    }
+    
+        /**
+         * Sets or clears the resizable option.
+         */
+    public final boolean isRotatable()
+    {
+        return (flags & ROTATABLE_MASK) != 0;
+    }
+    
+        /**
+         * Sets or clears the shearable option.
+         */
+    public final void setShearable(boolean s)
+    {
+        if (s) flags |= SHEARABLE_MASK;
+        else flags &= (0xffffffff ^ SHEARABLE_MASK);
+    }
+    
+        /**
+         * Sets or clears the resizable option.
+         */
+    public final boolean isShearable()
+    {
+        return (flags & SHEARABLE_MASK) != 0;
+    }
+
+        /**
+         *  Length of a line
+         */
+    public final static double lineLength(float x1, float y1,
+                                          float x2, float y2)
+    {
+        return Math.sqrt(((y2 - y1) * (y2 - y1)) + ((x2 - x1) * (x2 - x1)));
+    }
+
+        /**
+         * Calculates the shortest distance between a point (px, py) 
+         * and a line (x1, y1) to (x2, y2)
+         */
+    public final static double distBwPointAndLine(int px, int py,
+                                                 int x1, int y1,
+                                                 int x2, int y2)
+    {
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+        return ((dx * (py - y1)) - (dy * (px - x1))) / Math.sqrt(dx * dx + dy * dy);
+    }
+
+        /**
+         * Returns the minimum y point.
+         */
+    public int getMinY()
+    {
+        int miny = bounds.ypoints[0];
+        for (int i = 1;i < 4;i++)
+            if (bounds.ypoints[i] < miny) miny = bounds.ypoints[i];
+
+        return miny;
+    }
+
+        /**
+         * Returns the minimum x point.
+         */
+    public int getMinX()
+    {
+        int minx = bounds.xpoints[0];
+        for (int i = 1;i < 4;i++)
+            if (bounds.xpoints[i] < minx) minx = bounds.xpoints[i];
+
+        return minx;
+    }
+
+        /**
+         * Returns the maximum y point.
+         */
+    public int getMaxY()
+    {
+        int maxy = bounds.ypoints[0];
+        for (int i = 1;i < 4;i++)
+            if (bounds.ypoints[i] > maxy) maxy = bounds.ypoints[i];
+
+        return maxy;
+    }
+
+        /**
+         * Returns the maximum x point.
+         */
+    public int getMaxX()
+    {
+        int maxx = bounds.xpoints[0];
+        for (int i = 1;i < 4;i++)
+            if (bounds.xpoints[i] > maxx) maxx = bounds.xpoints[i];
+
+        return maxx;
+    }
+
+        /**
+         * Gets the center x coordinate of the shape.
+         */
+    public int getCenterX()
+    {
+        return (bounds.xpoints[0] + bounds.xpoints[2]) / 2;
+    }
+
+        /**
+         * Gets the center y coordinate of the shape.
+         */
+    public int getCenterY()
+    {
+        return (bounds.ypoints[0] + bounds.ypoints[2]) / 2;
+    }
+
+        /**
+         * Draws the outline.
+         */
+    public void paintOutline(Graphics g, int xOffset, int yOffset)
+    {
+        g.translate(-xOffset, -yOffset);
+        g.drawPolygon(bounds);
+        g.translate(xOffset, yOffset);
+    }
+
+}

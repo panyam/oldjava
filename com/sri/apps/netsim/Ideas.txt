@@ -1,0 +1,56 @@
+
+Network Simulator Concepts
+--------------------------
+
+First of all what is the structure of the network Simulator?  The main concept is that of Virtual Time!!!  The idea is "time consumes all".  Using this structure, we can even draw out a NetworkEntity's behaviour over time.
+
+The main structures are the Network, NetworkEntity and the Packet.  The Network is the world, which maintains the global time and the queue of
+events.  The NetworkEntities are the population that generate and consume events.  These can run over various network granularities.  Finally the
+Packet is the event generated and consumed by various NetworkEntities. Under this model, the Network is responsible for executing the packet
+consumption methods in the network.
+
+So what are the main issues?
+
+Packet Structure and Packet Driver Methods
+------------------------------------------
+
+Explicitness may be required.  A parent MUST know about the parent type.  Basically each packet driver must have a addParent functionality and for example the IP driver may have variables for different parent types.  
+
+First.  How is the Application interface?   Basically what is required?  An application must be able to send and recieve data.  But how?  As in
+blocking must be allowed and controlled and transparent to the user.  There has to be another layer between the actual application and the lowest
+driver to do something like blocking based calls and so on.  Writing packets is not an issue as this can be done in any order.  Reading is what
+is to be controlled.  This other layer.  Is it a Driver or an arbitrary class? This should be a driver as reading and writing could happen on any
+of the parents and will usually depend on the type of application. 
+
+How does the java Socket work?  In the TCPDriver we may need a connect and bind and those kind of operations on various ports.  Or should this task be delegated to a lower layer?  By keeping the tasks in the current 
+
+Each parent must have ways by which it can identify its child drivers.  Ie if a child driver is asking for packets, for example, EthernetDriver will
+accept children that are EthernetDriver.  Actually I one better.  Each driver will have its own way of adding its children.  For example, to
+register a child, it must call the parent's "addChild" function.  Say we have an EthernetDriver and its child drivers IP and IPX drivers.  So we
+register IP and IPX drivers as child drivers.  But, If we also had a TokenRing driver, the way the EthernetDriver differentiates bw the IP and
+IPX drivers could be different from the way TokenRing driver identifies IP and IPX drivers.  For example, Ethernet could use the value in the two byte
+protocol field where as the TokenRing one could use a 3 byte one and so on. So when a packet arrives, the driver should be able to determine from the contents of the packet, what the child driver at the next level should be.
+
+May be we can do this in a class specific way in run time.  For example, in the xml for the device, under the id section, we could have proto,class
+pairs.  So when the ethernet driver reads this part of the configs, it will register that protocol xxx requires driver yyy.   But this is for drivers, how about at different levels?  Let us say a packet comes in, and it goes through the Ethernet driver.  Seeing the IP protocol type, it goes to the IP driver.  Seeing the TCP protocol type, it goes to the TCP driver.  At this point, what happens?  It should one of the TCP Children, based on the ports.  for the TCP driver we could have a function that has addChild based on the port at which it is.  Not bad.
+
+Actually it does not have to be script based.  The child can add itself to the parent as it knows about the parent!!!  The parameters and semantics of the "addChild" would be different for different drivers.  For example, Etherent could have addChild as addChild(Driver, short), where as Tokenring  could have addChild as addChild(Driver, int).  Actually this concept can be taken a bit more generally.  For example, an Application is an instance of a type of driver.  For example consider again the following layered scenario: Ethernet, IP, and TCP drivers.  The ethernet driver strips the ip bit and gives it to the IP driver.  BUT.  One thing is overlooked.  What if some packets of ethernet type needs to go special processes?  This is the idea with Multicast addresses.  I guess this is where, a multicast table may need to be maintained.  Once again like driver dependant, we would have driver dependant "miscellaneous" packets. Lets talk about this later as it appears.
+
+Application Interface for IO
+--------------------------------------
+
+Applications need to send and receive data at the end of it.  However, send and recv functions must be able to be used under any driver and not just the TCP or UDP drivers.  So the application knows how to register itself to its parent.  But how will the application coordinate reading and writing of data?  Need some kind of Socket object that uses the send and recv function.  But if the socket is a generic driver then how will it take care of different kinds of "registerChild" functions?  Then how about making the protocol driver handle the "send" and "recv" functions?
+
+Now sending is easy as it happens and blocking isnt infinite.  But with a recieve call, how do we "wait".  As in if someone does a "read" call, then
+how we dont want a "block" because we are simulating and not modelling the network. By waiting this would pretty much go into an infinite wait.
+
+So how do we make generic readers and writers?  For example, we have UDP and TCP sockets that will allow reading and writing of data.  But what are required are "Process" objects that can be a child of any driver as long as it knows how to register itself as a child of a given driver.  So this can be RIP packets or TCP packets or what not.  Note that one driver can handle all packets of that type.  For example there will be only one IP driver that will deal with all IP addresses on the box.  
+
+How about the idea that nothing waits but rather responds to something.  So even though a driver is "requesting" for data, it is merely waiting for an "event to proceed".  So for example, if an Application has say 3 sockets open and has made 3 recv calls for data.  So how would this be functionally?  For example upon data from call x, corresponding function x mite be invoked.  But if only two calls have been successful and the third one is pending, the invocation of the functions must not wait for the finish of the third recv call.  So how about a generic Socket object that has only recv and send functions.  But how is a Socket different from a ProtocolDriver?  Or in that sense, how is a ProtocolDriver different from a FTP Server?
+
+So basically instead of having an explicit wait and recieve, each of these would have to maintain a set of states to indicate that they are waiting for packets and so on.  For example a MesgServer and MesgClient Pair.  So basically a generic Socket object MUST be used by Applications!!!  This will have (apart from the send and recv functions), functions that return the currentstate of the socket - could be waiting_for_data and so on..., isDataAvailable() and so on...
+
+Sockets can be extended to handle TCP or UDP or IP in general...  But should new ones be created for new drivers?  A "default" behaviour must apply for all drivers and specific ones to be used when required.  For example with TCP connections handling and tracking and all that needs to be taken care off.   But is this required?  Why cant the TCPDriver be used as the Socket itself instead of having to use multiple socket objects?  I think by this way Socket's are optional..  Sockets can still be used but only to hide a bit of mess that will be required.
+
+Start with Ping Driver...  So we need Ethernet, IP and Ping Driver.
+

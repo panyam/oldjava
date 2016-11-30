@@ -1,0 +1,14 @@
+Frequently Asked Questions
+
+Q1. Why HTML only?
+A1.  In an attempt to reduce the number of tools we would have to have available, we decided on HTML.  Most tools can generate HTML.
+
+Q2. Can I use any UML tool and imbed the diagram as an image?
+A2.  Yes.  This is probably the preferred method.
+
+Q3. Can we back up the material we submit with documentation that is 
+appropriate (above and beyond system assumptions) or do you mark solely on 
+the deliverables listed above?
+A3.  Marking is done based on the deliverables, but any additional documentation that will help support your submission and make it easier to grade is very much appreciated.  This means that you can not get any additional points for extra documentation.
+
+

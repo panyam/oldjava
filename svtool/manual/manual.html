@@ -1,0 +1,269 @@
+<html>
+<head>
+<title>
+Service Validator Tool
+</title>
+</head>
+<body>
+<HR>
+<H1>Service Validator Design and User Manual</H1>
+
+<H2>
+<A HREF="mailto:spany_1@hotmail.com">Sri Panyam</A></H2>v1.40.025, 18
+August 2004
+<P><HR>
+<EM>Details download and installation instructions for the Service
+Validator Tool (SVT) used to assist validation and cleansing of CSOM data.</EM>
+<HR>
+<P>
+<H2><A NAME="toc1">1.</A> <A HREF="#s1">Introduction</A></H2>
+
+<UL>
+<LI><A HREF="#ss1.1">1.1 Preamble</A>
+<LI><A HREF="#ss1.2">1.2 Copyright Information</A>
+</UL>
+
+<P>
+<H2><A NAME="toc2">2.</A> <A HREF="#s2">Installation Instructions</A></H2>
+<UL>
+<LI><A HREF="#ss2.1">2.1 Warning</A>
+<LI><A HREF="#ss2.2">2.2 Minimum Requirements</A>
+<LI><A HREF="#ss2.3">2.3 Install the JRE</A>
+<LI><A HREF="#ss2.4">2.4 Install the XML API</A>
+<LI><A HREF="#ss2.5">2.5 Install Oracle JDBC Client</A>
+<LI><A HREF="#ss2.6">2.6 Download the Software</A>
+<LI><A HREF="#ss2.7">2.7 Clean Up/Uninstall</A>
+</UL>
+
+<P>
+<H2><A NAME="toc3">3.</A> <A HREF="#s3">User Manual</A></H2>
+<UL>
+<LI><A HREF="#ss3.1">3.1 Introduction</A>
+<LI><A HREF="#ss3.2">3.2 CSOM Connectivity</A></li>
+<LI>
+    <A HREF="#ss3.3">3.3 Service Validator</A>
+    <ul>
+        <LI><A HREF="#ss3.3.1">3.3.1 Service Extraction</A></li>
+        <LI><A HREF="#ss3.3.2">3.3.2 Data Presentation</A></li>
+        <LI><A HREF="#ss3.3.3">3.3.3 Data Search</A></li>
+    </ul>
+</li>
+<LI>
+    <A HREF="#ss3.4">3.4 Network Discovery Validator</A>
+</li>
+</UL>
+
+<P>
+<H2><A NAME="toc4">4.</A> <A HREF="#s4">Design Documentation</A></H2>
+
+<UL>
+<LI><A HREF="#ss4.1">4.1 Lighting</A>
+<LI><A HREF="#ss4.2">4.2 Tutorials</A>
+</UL>
+
+<P>
+<H2><A NAME="toc5">5.</A> <A HREF="#s5">Related Links and References</A></H2>
+
+<UL>
+<LI><A HREF="#ss5.1">5.1 Java Documentation</A>
+<LI><A HREF="#ss5.2">5.2 XML Documentation</A>
+<LI><A HREF="#ss5.3">5.3 Books</A>
+<LI><A HREF="#ss5.4">5.4 Miscellaneous Links</A>
+</UL>
+
+<P>
+<H2><A NAME="toc6">6.</A> <A HREF="#s6">Acknowledgements</A></H2>
+
+<!-- End of TOC and Start of Content -->
+
+<!-- Section 1 - Introduction -->
+<HR>
+<H2> <A NAME="Introduction"></A> <A NAME="s1">1.</A>
+    <A HREF="#toc1">Introduction</A>
+</H2>
+
+<H2>
+    <A NAME="Intro-Preamble"></A> <A NAME="ss1.1">1.1 Preamble</A>
+</H2>
+<P>This document will guide you through the steps used to install and
+configure the Service Validator Tool (SVT).  The tool has been developed in
+order to assist in data validation and data cleansing for the CSOM
+database.  In this section you will also find information
+in  laymans terms about the required components and how they piece
+together.  In order to help with the extension of this software,
+information regarding SVT's design has also been included.  This section
+highlights the design methodology, flow and relationships between objects
+and the various design strategies used.
+<P>There are, at the minimum, four software packages you'll need in order to
+get up and running.  These are as follows:
+<P>
+<UL>
+<LI>The Java Runtime Environment or the Java Development Kit (for extension
+and source code hacking).;</LI>
+<LI>The XML API for Java;</LI>
+<LI>The Oracle JDBC drivers;</LI>
+<LI>The actual software itself;</LI>
+</UL>
+
+
+<H2>
+    <A NAME="Intro-Copyright"></A> <A NAME="ss1.2">1.2 Copyright Information</A>
+</H2>
+<P>Copyright &copy; 2004 Sri Panyam
+<P>This document may be reproduced in whole or in part, without fee, subject
+to the following restrictions:
+<P>
+<UL>
+<LI>the copyright notice above and this permission notice must be
+preserved complete on all complete or partial copies;</LI>
+<LI>any translation or derived work must be approved by the author in
+writing before distribution;</LI>
+<LI>if you distribute this work in part, instructions for obtaining
+the complete version of this manual must be included, and a means for
+obtaining a complete version provided;</LI>
+<LI>small portions may be reproduced as illustrations for reviews or
+quotes in other works without this permission notice if proper citation
+is given.</LI>
+</UL>
+
+<!-- Section 2 - Installation Instructions -->
+
+<!-- Section 3 - SVT User Manual -->
+
+<!-- Section 4 - Design Documentation -->
+
+<!-- Section 5 - Related Links and References -->
+
+<!-- Section 6 - Acknowledgements -->
+
+<HR>
+<H2> <A NAME="Installation-Instructions"></A> <A NAME="s2">2.</A>
+    <A HREF="#toc2">Installation Instructions</A>
+</H2>
+<H2>
+    <A NAME="Installation-Warning"></A> <A NAME="ss2.1">2.1 Warning</A>
+</H2>
+These instructions are only basic guide and no responsibility is taken for
+any side effects that may be caused.
+
+<H2>
+    <A NAME="Installation-Requirements"></A>
+    <A NAME="ss2.2">2.2 Minimum Requirements</A>
+</H2>
+The minimum requirements are:
+<ul>
+<li>Java Runtime Environment or Java Development Kit: 1.4 or Higher</li>
+<li>Xerces XML4J API: 1.4 or Higher</li>
+<li>Oracle Client: 8.1.7 or Higher</li>
+<li>Oracle JDBC Libraries: 1.2 or Higher</li>
+</ul>
+
+<H2>
+    <A NAME="Installation-JREInstall"></A>
+    <A NAME="ss2.3">2.3 Install the JRE</A>
+</H2>
+<p>
+Firstly, a recent (1.4+) Java Runtime Environment (JRE) is required in the
+host machine.  If a valid JRE is not installed, please download and install
+one from <a href=http://java.sun.com/j2se/1.4.2/download.html>here</a>.  
+<p>
+If you wish to play around with the source code or compile it yourself, you
+will require the Java Development Kit (JDK) rather than the JRE.  The JDK
+includes a JRE and can be downloaded from the above mentioned site.
+<p>
+Once installed, please note the directory in which the JRE (or the JDK) has been installed.
+
+<H2>
+    <A NAME="Installation-XMLInstall"></A>
+    <A NAME="ss2.4">2.4 Install the XML API</A>
+</H2>
+<p>
+The XML libraries are one of the core libraries for the Service Validator
+Tool.  These libraries are used for all storage of data in both disk and in
+memory.  These can be downloaded from <a
+href=http://xml.apache.org/dist/xerces-j/>Apache XML4J Distribution
+Site</a>.  This site contains the latest versions.  Note that for all
+purposes (of the SVT use), only the binaries will suffice.  Download the
+binaries in the format you would find easiest to extract.  Once you
+downloaded, extract it into any directory.  <strong> Note: </strong>After
+extraction of the files, verify that the <strong>xerces.jar</strong> has
+been extracted.  Normally this file would be found in the
+XML_EXTRACTION_DIRECTORY itself.  If not, move the file xerces.jar to the
+extraction directory.
+
+<H2>
+    <A NAME="Installation-ORAInstall"></A>
+    <A NAME="ss2.5">2.5 Install Oracle JDBC Client</A>
+</H2>
+Install the Oracle client (8.1.7 or higher) by following the Oracle
+installations.  Also ensure that the file "classes12.zip" is installed in
+the ORACLE_INSTALLATION_DIRECTORY\jdbc\lib\ directory.
+
+<H2>
+    <A NAME="Installation-SWConfig"></A>
+    <A NAME="ss2.6">2.6 Configuring the Software</A>
+</H2>
+Once the above three core APIs and/or drivers have been installed, two
+scripts need to be edited to point to the directories where the above
+software are installed. These are as follows:
+
+<p>
+<li>
+<strong>Configuring Run Scripts:</strong>
+</li>
+<p>
+The run script, "run.bat", is located in the SVT installation directory
+(for example, c:\svtool or c:\program files\svtool).  Edit this file, and
+the contents are similar to the following:
+<pre>
+@echo off
+...
+...
+set JDK_LOC=c:\dev\j2eedk\jdk
+set XML_LOC=c:\dev\xerces-1_4_4
+set ORA_LOC=c:\orant
+...
+...
+</pre>
+Now in the above three lines, substitute the locations of JDK_LOC, XML_LOC
+and ORA_LOC variables to <strong>YOUR</strong> installation directories of
+the JDK (or JRE), XML and Oracle software, respectively.
+
+<p>
+<li>
+<strong>Configuring Make Scripts:</strong>
+</li>
+<p>
+If you are interested in compiling the source code then you MUST
+have the JDK installed.  Edit the make script, "make.bat", also located in
+the SVT Installation directory.  Like the run script, make.bat will also
+have the following lines:
+<pre>
+@echo off
+...
+...
+set JDK_LOC=c:\dev\j2eedk\jdk
+set XML_LOC=c:\dev\xerces-1_4_4
+set ORA_LOC=c:\orant
+...
+...
+</pre>
+Once again substitute the locations of JDK_LOC, XML_LOC and ORA_LOC
+variables to <strong>YOUR</strong> installation directories of the JDK, XML
+and Oracle software, respectively.
+
+<H2>
+    <A NAME="Installation-Cleanup"></A>
+    <A NAME="ss2.7">2.7 Cleanup/Uninstall</A>
+</H2>
+
+<p>
+The SVT and the XML software can be removed by deleting the entire
+directories.
+
+<p>
+In order to remove the JDK and Oracle software please consult the
+appropriate application user manuals.
+
+</body>
+</html>
